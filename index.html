@@ -1,0 +1,4243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expense Tracker - Cute Gamified Money Buddy</title>
+<style>
+        :root {
+            /* Pastel Purple + Warm Cream Theme */
+            --bg-body: #FFF8EE;             /* Main page background: Warm Cream */
+            --bg-secondary: #F8F0E3;        /* Secondary background: Soft Cream */
+            --card-bg: #FFFCF6;             /* Cream-white card surfaces */
+            --card-lavender: #F0E8FA;       /* Light lavender cards */
+            --primary: #8B70B5;             /* Primary purple */
+            --primary-hover: #7A5FA3;       /* Deeper purple for hover/active */
+            --primary-deep: #55416F;        /* Deep purple for headings */
+            --primary-light: #F0E8FA;       /* Light lavender */
+            --primary-soft: #E4D8F4;        /* Soft pastel purple */
+            --primary-accent: #B49AD8;      /* Accent purple */
+            --primary-glow: rgba(139, 112, 181, 0.22);
+            --border-color: #E8DDF0;        /* Subtle lavender/cream borders */
+            --border-focus: #B49AD8;
+            --text-main: #453B4D;           /* Main dark text */
+            --text-secondary: #82778A;      /* Secondary muted text */
+            --text-light: #9E94A6;
+            --heading-color: #55416F;       /* Deep purple for headings */
+
+            /* Success indicators: Soft sage green */
+            --success: #3D6135;
+            --success-accent: #A9C5A0;
+            --success-bg: #EBF4E9;
+            --success-hover: #2E4D27;
+
+            /* Warning indicators: Soft peach */
+            --warning: #B35324;
+            --warning-accent: #F4C6A5;
+            --warning-bg: #FDF3EC;
+
+            /* Expenses: Soft terracotta / warm rose */
+            --danger: #C75656;
+            --danger-bg: #FDF1F1;
+            --danger-hover: #B24545;
+
+            /* Bear Mascot Barnaby Colors */
+            --bear-fur: #A67651;
+            --bear-ear: #E8B89C;
+            --bear-snout: #FFF3E3;
+            --bear-eye: #382A22;
+            --bear-blush: #F4A6A6;
+
+            /* Radii & Shadows */
+            --radius-sm: 10px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --shadow-subtle: 0 4px 18px rgba(139, 112, 181, 0.06), 0 1px 3px rgba(85, 65, 111, 0.03);
+            --shadow-card: 0 10px 30px rgba(139, 112, 181, 0.09), 0 2px 8px rgba(85, 65, 111, 0.03);
+            --shadow-modal: 0 25px 50px -12px rgba(69, 59, 77, 0.3);
+            --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Quicksand", "Nunito", "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 10% 12%, rgba(228, 216, 244, 0.45) 0%, transparent 38%),
+                radial-gradient(circle at 90% 88%, rgba(248, 240, 227, 0.85) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Navigation */
+        header {
+            background: var(--card-bg);
+            border-bottom: 1.5px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 14px rgba(139, 112, 181, 0.06);
+        }
+
+        .header-container {
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-icon-wrap {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-accent) 100%);
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            color: #FFFCF6;
+            font-weight: 800;
+            font-size: 20px;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .brand-paw-decor {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            font-size: 11px;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--heading-color);
+            letter-spacing: -0.3px;
+        }
+
+        .brand-text h1 span {
+            color: var(--primary);
+        }
+
+        .brand-subtitle-mini {
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: block;
+            margin-top: -3px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-level-badge {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: var(--card-lavender);
+            border: 1.5px solid var(--border-color);
+            color: var(--heading-color);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 12.5px;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(139, 112, 181, 0.08);
+        }
+
+        .user-profile-badge {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-lavender);
+            padding: 5px 12px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border-color);
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #FFFCF6;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .user-name-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--heading-color);
+        }
+
+        .btn-settings-header {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            background: var(--card-bg);
+            color: var(--heading-color);
+            border: 1.5px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-settings-header:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--card-lavender);
+        }
+
+        .btn-logout {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            background: var(--card-bg);
+            color: var(--danger);
+            border: 1.5px solid rgba(199, 86, 86, 0.35);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+        }
+
+        /* Main Workspace Container */
+        main {
+            max-width: 1260px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 22px 20px 42px;
+            flex: 1;
+        }
+
+        /* Auth View */
+        .auth-view-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(80vh - 120px);
+            padding: 20px 0;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 38px 34px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .auth-mascot-badge {
+            font-size: 38px;
+            margin-bottom: 8px;
+            display: inline-block;
+            filter: drop-shadow(0 4px 6px rgba(85, 65, 111, 0.1));
+        }
+
+        .auth-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--heading-color);
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .security-demo-banner {
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--heading-color);
+            line-height: 1.4;
+        }
+
+        .password-field-wrap {
+            position: relative;
+        }
+
+        .password-field-wrap input {
+            padding-right: 42px;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .auth-switch-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .auth-switch-text a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .auth-switch-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* GAMIFIED MONEY BUDDY & PET CARDS ROW */
+        .gamification-hub-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-subtle);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card);
+            border-color: var(--primary-accent);
+        }
+
+        /* 1. Bear Mascot Card */
+        .money-buddy-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, var(--card-lavender) 100%);
+            border: 1.5px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* Inline CSS Bear Mascot */
+        .css-bear-wrap {
+            position: relative;
+            width: 74px;
+            height: 74px;
+            flex-shrink: 0;
+            animation: bearBob 3s ease-in-out infinite;
+        }
+
+        .bear-ear {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: var(--bear-fur);
+            border-radius: 50%;
+            top: 2px;
+        }
+
+        .bear-ear.ear-left { left: 4px; }
+        .bear-ear.ear-right { right: 4px; }
+
+        .ear-inner {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--bear-ear);
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+
+        .bear-head {
+            position: absolute;
+            width: 66px;
+            height: 60px;
+            background: var(--bear-fur);
+            border-radius: 50% 50% 46% 46%;
+            top: 12px;
+            left: 4px;
+            box-shadow: inset 0 -3px 6px rgba(56, 42, 34, 0.15), 0 4px 8px rgba(85, 65, 111, 0.08);
+        }
+
+        .bear-eye {
+            position: absolute;
+            width: 7px;
+            height: 9px;
+            background: var(--bear-eye);
+            border-radius: 50%;
+            top: 22px;
+        }
+
+        .bear-eye.eye-left { left: 16px; }
+        .bear-eye.eye-right { right: 16px; }
+
+        .bear-eye::after {
+            content: '';
+            position: absolute;
+            width: 2.5px;
+            height: 2.5px;
+            background: #FFFCF6;
+            border-radius: 50%;
+            top: 1.5px;
+            left: 1.5px;
+        }
+
+        .bear-blush {
+            position: absolute;
+            width: 11px;
+            height: 6px;
+            background: var(--bear-blush);
+            opacity: 0.65;
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .bear-blush.blush-left { left: 10px; }
+        .bear-blush.blush-right { right: 10px; }
+
+        .bear-snout {
+            position: absolute;
+            width: 26px;
+            height: 20px;
+            background: var(--bear-snout);
+            border-radius: 50%;
+            bottom: 10px;
+            left: 20px;
+        }
+
+        .bear-nose {
+            position: absolute;
+            width: 8px;
+            height: 6px;
+            background: var(--bear-eye);
+            border-radius: 50% 50% 60% 60%;
+            top: 3px;
+            left: 9px;
+        }
+
+        .bear-smile {
+            position: absolute;
+            width: 8px;
+            height: 4px;
+            border-bottom: 2px solid var(--bear-eye);
+            border-radius: 0 0 8px 8px;
+            bottom: 3px;
+            left: 9px;
+        }
+
+        .bear-paw-badge {
+            position: absolute;
+            bottom: -2px;
+            right: 0px;
+            font-size: 16px;
+            background: #FFFCF6;
+            border: 1.5px solid var(--border-color);
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 2px 6px rgba(85, 65, 111, 0.1);
+        }
+
+        .buddy-dialogue-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .buddy-header-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .buddy-name-tag {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .buddy-streak-badge {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border: 1px solid var(--warning-accent);
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .buddy-bubble {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            padding: 9px 13px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            line-height: 1.4;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(139, 112, 181, 0.05);
+        }
+
+        .buddy-bubble::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 14px;
+            width: 10px;
+            height: 10px;
+            background: var(--card-bg);
+            border-left: 1.5px solid var(--border-color);
+            border-bottom: 1.5px solid var(--border-color);
+            transform: rotate(45deg);
+        }
+
+        .buddy-action-row {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-checkin {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-accent) 100%);
+            color: #FFFCF6;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(139, 112, 181, 0.25);
+        }
+
+        .btn-checkin:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.06);
+            box-shadow: 0 4px 12px rgba(139, 112, 181, 0.35);
+        }
+
+        .btn-checkin:disabled {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: default;
+            box-shadow: none;
+        }
+
+        /* 2. XP & Level Card */
+        .level-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .level-badge-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .level-xp-counter {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .level-progress-bar {
+            width: 100%;
+            height: 9px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .level-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .level-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* 3. Daily Challenge Card */
+        .challenge-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .challenge-label {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .challenge-reward-chip {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid var(--success-accent);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 12px;
+        }
+
+        .challenge-desc-text {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .challenge-action-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .challenge-status-tag {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--warning);
+        }
+
+        .challenge-status-tag.completed {
+            color: var(--success);
+        }
+
+        .btn-claim-challenge {
+            background: var(--card-lavender);
+            color: var(--heading-color);
+            border: 1.5px solid var(--primary-accent);
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-claim-challenge:hover:not(:disabled) {
+            background: var(--primary);
+            color: #FFFCF6;
+        }
+
+        .btn-claim-challenge:disabled {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+            cursor: default;
+        }
+
+        /* 4 Key Dashboard Metric Cards */
+        .stats-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card);
+            border-color: var(--primary-accent);
+        }
+
+        .stat-card.featured-balance {
+            background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 100%);
+            color: #FFFCF6;
+            border: none;
+            box-shadow: 0 10px 28px rgba(85, 65, 111, 0.22);
+        }
+
+        .stat-card.featured-balance .stat-label {
+            color: var(--primary-soft);
+        }
+
+        .stat-card.featured-balance .stat-value {
+            color: #FFFCF6;
+        }
+
+        .stat-card.featured-balance .stat-icon-wrap {
+            background: rgba(255, 252, 246, 0.2);
+            color: #FFFCF6;
+            border: none;
+        }
+
+        .stat-card.featured-balance .stat-hint {
+            color: var(--primary-soft);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .stat-icon-wrap {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--card-lavender);
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .stat-icon-wrap.income-icon {
+            background: var(--success-bg);
+            color: var(--success);
+            border-color: var(--success-accent);
+        }
+
+        .stat-icon-wrap.expense-icon {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border-color: rgba(199, 86, 86, 0.25);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--heading-color);
+            word-break: break-all;
+            line-height: 1.2;
+        }
+
+        .stat-value.text-income {
+            color: var(--success);
+        }
+
+        .stat-value.text-expense {
+            color: var(--danger);
+        }
+
+        .stat-bottom-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 11.5px;
+        }
+
+        .stat-hint {
+            color: var(--text-secondary);
+            font-size: 11.5px;
+        }
+
+        .btn-mini-action {
+            background: transparent;
+            border: 1.5px solid var(--border-color);
+            padding: 3px 8px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-mini-action:hover {
+            background: var(--card-lavender);
+            border-color: var(--primary);
+        }
+
+        /* Sub-Row: Budget & Daily Money Recap */
+        .budget-recap-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .budget-card, .recap-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .budget-top, .recap-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .budget-info-left h3, .recap-top h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .budget-info-left p {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        .budget-numbers {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 12.5px;
+        }
+
+        .budget-stat-item {
+            text-align: right;
+        }
+
+        .budget-stat-item small {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .budget-stat-item strong {
+            font-size: 14px;
+            color: var(--heading-color);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 9px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 8px 0 6px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+            border-radius: 20px;
+            transition: width 0.4s ease, background-color 0.3s ease;
+        }
+
+        .progress-bar-fill.warning {
+            background: linear-gradient(90deg, var(--warning-accent) 0%, var(--warning) 100%);
+        }
+
+        .progress-bar-fill.exceeded {
+            background: linear-gradient(90deg, #E07A7A 0%, var(--danger) 100%);
+        }
+
+        .budget-alert-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Recap Grid */
+        .recap-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .recap-box {
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            text-align: center;
+        }
+
+        .recap-box small {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: block;
+            font-weight: 600;
+        }
+
+        .recap-box strong {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+            margin-top: 2px;
+            display: block;
+        }
+
+        /* Two-Column Workspace Layout */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 390px 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .left-column-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .panel-header {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1.5px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .panel-title {
+            font-size: 15.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        /* Segmented Tabs */
+        .type-segmented-control {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 16px;
+            gap: 4px;
+        }
+
+        .segment-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .segment-btn.active.segment-expense {
+            background: var(--card-bg);
+            color: var(--danger);
+            box-shadow: 0 2px 6px rgba(199, 86, 86, 0.12);
+        }
+
+        .segment-btn.active.segment-income {
+            background: var(--card-bg);
+            color: var(--success);
+            box-shadow: 0 2px 6px rgba(61, 97, 53, 0.12);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--heading-color);
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="date"],
+        input[type="search"],
+        select {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: var(--text-main);
+            background: #FFFDF9;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            background: #FFFCF6;
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-input span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-weight: 700;
+            pointer-events: none;
+        }
+
+        .currency-input input {
+            padding-left: 28px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 15px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: inherit;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--primary);
+            color: #FFFCF6;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px var(--primary-glow);
+        }
+
+        .btn-income-submit {
+            background: #5B8452;
+            color: #FFFCF6;
+            box-shadow: 0 4px 14px rgba(91, 132, 82, 0.25);
+        }
+
+        .btn-income-submit:hover {
+            background: var(--success-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--heading-color);
+            border: 1.5px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-lavender);
+            border-color: var(--primary-accent);
+        }
+
+        .btn-clear {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1.5px solid rgba(199, 86, 86, 0.25);
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .btn-clear:hover {
+            background: #FCE6E6;
+        }
+
+        .btn-export {
+            background: var(--card-bg);
+            color: var(--heading-color);
+            border: 1.5px solid var(--border-color);
+            font-size: 12px;
+            padding: 5px 11px;
+            border-radius: 7px;
+        }
+
+        .btn-export:hover {
+            background: var(--card-lavender);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .status-message {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-message.success {
+            display: block;
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1.5px solid var(--success-accent);
+        }
+
+        .status-message.error {
+            display: block;
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1.5px solid rgba(199, 86, 86, 0.3);
+        }
+
+        /* Category Breakdown */
+        .category-breakdown-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .cat-bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .cat-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .cat-bar-title {
+            font-weight: 700;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cat-bar-amount {
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .cat-track {
+            height: 7px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* Savings Goals */
+        .goals-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .goal-item-card {
+            background: var(--card-lavender);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            transition: var(--transition);
+        }
+
+        .goal-item-card:hover {
+            border-color: var(--primary-accent);
+            box-shadow: 0 4px 12px rgba(139, 112, 181, 0.08);
+        }
+
+        .goal-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .goal-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+        }
+
+        .goal-amounts {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .goal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 7px;
+            padding-top: 7px;
+            border-top: 1.5px solid var(--border-color);
+        }
+
+        .goal-disclaimer {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        /* My Badges Section */
+        .badges-grid-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .badge-box-item {
+            background: var(--bg-secondary);
+            border: 1.5px dashed var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.6;
+            transition: var(--transition);
+        }
+
+        .badge-box-item.unlocked {
+            opacity: 1;
+            background: var(--card-lavender);
+            border-style: solid;
+            border-color: var(--primary-accent);
+            box-shadow: 0 3px 10px rgba(139, 112, 181, 0.1);
+        }
+
+        .badge-icon-slot {
+            font-size: 24px;
+            flex-shrink: 0;
+            filter: grayscale(1);
+        }
+
+        .badge-box-item.unlocked .badge-icon-slot {
+            filter: none;
+        }
+
+        .badge-info-slot strong {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+            display: block;
+        }
+
+        .badge-info-slot span {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: block;
+            line-height: 1.3;
+        }
+
+        /* History Panel */
+        .history-controls {
+            display: grid;
+            grid-template-columns: 1fr 130px 130px;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            max-height: 580px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .transaction-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .transaction-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 13px;
+            background: #FFFDF9;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            gap: 10px;
+        }
+
+        .transaction-item:hover {
+            background: var(--card-lavender);
+            border-color: var(--primary-accent);
+            box-shadow: 0 4px 12px rgba(139, 112, 181, 0.08);
+            transform: translateX(2px);
+        }
+
+        .transaction-item.income-row {
+            border-left: 4px solid var(--success-accent);
+        }
+
+        .transaction-item.expense-row {
+            border-left: 4px solid var(--danger);
+        }
+
+        .transaction-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .cat-badge-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+        }
+
+        .transaction-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+            flex-wrap: wrap;
+        }
+
+        .pill-type {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .pill-type.type-expense {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .pill-type.type-income {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .pill-category {
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--heading-color);
+        }
+
+        .transaction-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .transaction-note {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        .transaction-item-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .transaction-amount {
+            font-size: 14.5px;
+            font-weight: 800;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .transaction-amount.amt-expense { color: var(--danger); }
+        .transaction-amount.amt-income { color: var(--success); }
+
+        .row-action-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            padding: 4px 7px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .row-action-btn.btn-edit:hover {
+            color: var(--primary);
+            background: var(--card-lavender);
+        }
+
+        .row-action-btn.btn-delete:hover {
+            color: var(--danger);
+            background: var(--danger-bg);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 36px 14px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 38px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--heading-color);
+        }
+
+        .empty-state p {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        .history-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1.5px solid var(--border-color);
+        }
+
+        .count-summary {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(69, 59, 77, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow-modal);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1.5px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 16.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        /* Gentle Celebration Toast */
+        .celebration-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: none;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 12px 32px rgba(139, 112, 181, 0.25);
+            z-index: 2000;
+            max-width: 380px;
+            animation: toastSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .celebration-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+            animation: bounce 1s infinite alternate;
+        }
+
+        .celebration-body strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--heading-color);
+        }
+
+        .celebration-body p {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .celebration-close {
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            align-self: flex-start;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            border-top: 1.5px solid var(--border-color);
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+
+        /* Animations */
+        @keyframes bearBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-4px); }
+        }
+
+        @keyframes toastSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.85; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .css-bear-wrap, .celebration-icon, .celebration-toast {
+                animation: none !important;
+            }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1100px) {
+            .gamification-hub-row {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .budget-recap-row {
+                grid-template-columns: 1fr;
+            }
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .history-controls {
+                grid-template-columns: 1fr;
+            }
+            .badges-grid-section {
+                grid-template-columns: 1fr;
+            }
+            .header-container {
+                padding: 10px 14px;
+            }
+            main {
+                padding: 14px 12px;
+            }
+            .auth-card {
+                padding: 24px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon-wrap">
+                    ₹
+                    <span class="brand-paw-decor">🐾</span>
+                </div>
+                <div class="brand-text">
+                    <h1>Expense<span>Flow</span></h1>
+                    <span class="brand-subtitle-mini">Cute Money Buddy 🐻</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- User Profile & Level Badge -->
+                <div class="header-level-badge" id="headerLevelBadge">
+                    <span id="headerLevelIcon">🌱</span>
+                    <span id="headerLevelName">Money Seed</span>
+                </div>
+
+                <div class="user-profile-badge" id="userProfileBadge">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span class="user-name-text" id="headerUserName">User</span>
+                </div>
+
+                <!-- Budget & Balance Settings Button -->
+                <button type="button" class="btn-settings-header" id="headerSettingsBtn" title="Set Starting Balance & Daily Budget">
+                    ⚙️ Settings
+                </button>
+
+                <!-- Logout Button -->
+                <button type="button" class="btn-logout" id="logoutBtn" title="Log out of your account">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+
+        <!-- AUTHENTICATION VIEW (LOGIN & REGISTRATION) -->
+        <div class="auth-view-container" id="authViewContainer">
+
+            <!-- 1. LOGIN CARD -->
+            <div class="auth-card" id="loginCard">
+                <div class="auth-header">
+                    <span class="auth-mascot-badge">🐻</span>
+                    <h2>Welcome Back!</h2>
+                    <p>Log in to meet your Money Buddy &amp; check your finances</p>
+                </div>
+
+                <div class="security-demo-banner">
+                    <span>💡</span>
+                    <div>
+                        <strong>Client-side Demo:</strong> User accounts &amp; hashed passwords are saved in browser localStorage.
+                    </div>
+                </div>
+
+                <form id="loginForm" novalidate>
+                    <div class="form-group">
+                        <label for="loginIdentifier">Email or Username</label>
+                        <input type="text" id="loginIdentifier" placeholder="Enter your email or username" autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="password-field-wrap">
+                            <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" required>
+                            <button type="button" class="password-toggle-btn" id="toggleLoginPassword" aria-label="Toggle password visibility">👁️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="loginSubmitBtn">
+                        Log In 🐾
+                    </button>
+
+                    <div id="loginStatusMessage" class="status-message" role="alert"></div>
+                </form>
+
+                <div class="auth-switch-text">
+                    New here? <a id="switchToRegisterLink">Create a free account</a>
+                </div>
+            </div>
+
+            <!-- 2. REGISTRATION CARD -->
+            <div class="auth-card" id="registerCard" style="display: none;">
+                <div class="auth-header">
+                    <span class="auth-mascot-badge">🌱</span>
+                    <h2>Create Account</h2>
+                    <p>Start your gamified money journey with your bear companion</p>
+                </div>
+
+                <div class="security-demo-banner">
+                    <span>🛡️</span>
+                    <div>
+                        <strong>Privacy Isolation:</strong> Each account maintains completely separate balances, transactions, and game progress.
+                    </div>
+                </div>
+
+                <form id="registerForm" novalidate>
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" placeholder="e.g. Sandhiya" maxlength="50" autocomplete="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerEmail">Email Address</label>
+                        <input type="email" id="registerEmail" placeholder="name@example.com" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerPassword">Password (min 6 characters)</label>
+                        <div class="password-field-wrap">
+                            <input type="password" id="registerPassword" placeholder="Create a password" autocomplete="new-password" required>
+                            <button type="button" class="password-toggle-btn" id="toggleRegisterPassword" aria-label="Toggle password visibility">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">Confirm Password</label>
+                        <div class="password-field-wrap">
+                            <input type="password" id="registerConfirmPassword" placeholder="Re-type your password" autocomplete="new-password" required>
+                            <button type="button" class="password-toggle-btn" id="toggleConfirmPassword" aria-label="Toggle confirm password visibility">👁️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="registerSubmitBtn">
+                        Join Money Buddy ⭐
+                    </button>
+
+                    <div id="registerStatusMessage" class="status-message" role="alert"></div>
+                </form>
+
+                <div class="auth-switch-text">
+                    Already have an account? <a id="switchToLoginLink">Log in here</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView" style="display: none;">
+
+            <!-- GAMIFICATION HUB: 1. Cute Bear Money Buddy | 2. XP & Level | 3. Daily Mini-Challenge -->
+            <section class="gamification-hub-row">
+                
+                <!-- 1. Money Buddy Card with CSS Bear -->
+                <div class="game-card money-buddy-card">
+                    <!-- Inline CSS Mascot Bear -->
+                    <div class="css-bear-wrap" aria-hidden="true">
+                        <div class="bear-ear ear-left"><div class="ear-inner"></div></div>
+                        <div class="bear-ear ear-right"><div class="ear-inner"></div></div>
+                        <div class="bear-head">
+                            <div class="bear-eye eye-left"></div>
+                            <div class="bear-eye eye-right"></div>
+                            <div class="bear-blush blush-left"></div>
+                            <div class="bear-blush blush-right"></div>
+                            <div class="bear-snout">
+                                <div class="bear-nose"></div>
+                                <div class="bear-smile"></div>
+                            </div>
+                        </div>
+                        <div class="bear-paw-badge">🐾</div>
+                    </div>
+
+                    <!-- Dialogue & Daily Check-in -->
+                    <div class="buddy-dialogue-wrap">
+                        <div class="buddy-header-line">
+                            <span class="buddy-name-tag">Barnaby Bear 🐻</span>
+                            <span class="buddy-streak-badge" id="buddyStreakBadge" title="Consecutive days tracking transactions">🔥 0-day streak</span>
+                        </div>
+                        <div class="buddy-bubble" id="buddySpeechBubble">
+                            Hey! Ready to check your money today? 🐻
+                        </div>
+                        <div class="buddy-action-row">
+                            <button type="button" class="btn-checkin" id="dailyCheckInBtn">
+                                🌞 Daily Check-In (+5 XP)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. XP & Level System Card -->
+                <div class="game-card">
+                    <div class="level-card-top">
+                        <span class="level-badge-title">
+                            <span id="levelCardIcon">🌱</span>
+                            <span id="levelCardName">Money Seed</span>
+                        </span>
+                        <span class="level-xp-counter" id="levelXpCounter">0 XP</span>
+                    </div>
+                    <div class="level-progress-bar">
+                        <div class="level-progress-fill" id="levelProgressBar"></div>
+                    </div>
+                    <div class="level-meta-row">
+                        <span id="levelProgressText">0 / 25 XP to Level 2</span>
+                        <span id="levelRankTag">Level 1 of 4</span>
+                    </div>
+                </div>
+
+                <!-- 3. Daily Mini-Challenge Card -->
+                <div class="game-card">
+                    <div class="challenge-title-row">
+                        <span class="challenge-label">
+                            <span id="challengeIcon">📝</span> Today's Quest
+                        </span>
+                        <span class="challenge-reward-chip">+10 XP</span>
+                    </div>
+                    <p class="challenge-desc-text" id="challengeDescText">
+                        Log today's spending honestly to keep your money diary fresh.
+                    </p>
+                    <div class="challenge-action-row">
+                        <span class="challenge-status-tag" id="challengeStatusTag">In Progress</span>
+                        <button type="button" class="btn-claim-challenge" id="challengeActionBtn">Verify Quest</button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 4 Key Metric Cards (Starting Balance, Total Income, Total Expenses, Current Balance) -->
+            <section class="stats-grid-4">
+                
+                <!-- 1. Starting Balance Card -->
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Starting Balance</span>
+                        <div class="stat-icon-wrap">🏦</div>
+                    </div>
+                    <div class="stat-value" id="startingBalanceDisplay">₹0.00</div>
+                    <div class="stat-bottom-row">
+                        <span class="stat-hint">Initial fund setup</span>
+                        <button type="button" class="btn-mini-action" id="editStartingBalanceBtn">✏️ Edit</button>
+                    </div>
+                </div>
+
+                <!-- 2. Total Money Received (Income) -->
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Total Received</span>
+                        <div class="stat-icon-wrap income-icon">➕</div>
+                    </div>
+                    <div class="stat-value text-income" id="totalIncomeDisplay">₹0.00</div>
+                    <div class="stat-bottom-row">
+                        <span class="stat-hint" id="incomeCountHint">0 income entries</span>
+                    </div>
+                </div>
+
+                <!-- 3. Total Expenses -->
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Total Expenses</span>
+                        <div class="stat-icon-wrap expense-icon">➖</div>
+                    </div>
+                    <div class="stat-value text-expense" id="totalExpensesDisplay">₹0.00</div>
+                    <div class="stat-bottom-row">
+                        <span class="stat-hint" id="expenseCountHint">0 expense entries</span>
+                    </div>
+                </div>
+
+                <!-- 4. Current Balance (Featured Live Balance) -->
+                <div class="stat-card featured-balance">
+                    <div class="stat-top">
+                        <span class="stat-label">Current Balance</span>
+                        <div class="stat-icon-wrap">₹</div>
+                    </div>
+                    <div class="stat-value" id="currentBalanceDisplay">₹0.00</div>
+                    <div class="stat-bottom-row">
+                        <span class="stat-hint">Starting + Income - Expenses</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Sub-Row: Daily Spending Budget & Today's Money Recap -->
+            <section class="budget-recap-row">
+                
+                <!-- Daily Budget Card -->
+                <div class="budget-card">
+                    <div class="budget-top">
+                        <div class="budget-info-left">
+                            <h3>📅 Daily Spending Budget</h3>
+                            <p id="budgetHintText">Keep your daily limit on track.</p>
+                        </div>
+                        <div class="budget-numbers">
+                            <div class="budget-stat-item">
+                                <small>Today's Spent</small>
+                                <strong id="todaySpentDisplay">₹0.00</strong>
+                            </div>
+                            <div class="budget-stat-item">
+                                <small>Daily Budget</small>
+                                <strong id="dailyBudgetDisplay">₹0.00</strong>
+                            </div>
+                            <div class="budget-stat-item">
+                                <small>Remaining</small>
+                                <strong id="todayRemainingDisplay">₹0.00</strong>
+                            </div>
+                            <button type="button" class="btn-mini-action" id="editDailyBudgetBtn">✏️ Set Budget</button>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="budgetProgressBar"></div>
+                    </div>
+                    <div class="budget-alert-text">
+                        <span id="budgetAlertMessage">Set a daily budget to track spending.</span>
+                        <span id="budgetPercentText">0% Used</span>
+                    </div>
+                </div>
+
+                <!-- Today's Money Recap Card -->
+                <div class="recap-card">
+                    <div class="recap-top">
+                        <h3>📊 Today's Money Recap</h3>
+                        <small class="stat-hint" id="recapDateDisplay">Today</small>
+                    </div>
+                    <div class="recap-metrics-grid" id="recapMetricsGrid">
+                        <div class="recap-box">
+                            <small>Today's Income</small>
+                            <strong style="color: var(--success);" id="recapIncomeVal">+₹0.00</strong>
+                        </div>
+                        <div class="recap-box">
+                            <small>Today's Expenses</small>
+                            <strong style="color: var(--danger);" id="recapExpenseVal">-₹0.00</strong>
+                        </div>
+                        <div class="recap-box">
+                            <small>Net Change</small>
+                            <strong id="recapNetVal">₹0.00</strong>
+                        </div>
+                        <div class="recap-box">
+                            <small>Entries Today</small>
+                            <strong id="recapTxCountVal">0</strong>
+                        </div>
+                        <div class="recap-box" style="grid-column: span 2;">
+                            <small>Top Category Today</small>
+                            <strong id="recapTopCatVal">None yet 🐾</strong>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Two-Column Layout -->
+            <div class="workspace-grid">
+                
+                <!-- LEFT COLUMN: Transaction Form + Category Breakdown + Savings Goals + My Badges -->
+                <div class="left-column-stack">
+                    
+                    <!-- Add Transaction Panel (Segmented for Expense & Income) -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title" id="formPanelTitle">
+                                <span>➕</span> Log Transaction
+                            </h3>
+                        </div>
+
+                        <!-- Segmented Tab Switcher -->
+                        <div class="type-segmented-control" role="tablist">
+                            <button type="button" class="segment-btn active segment-expense" id="tabExpenseBtn" role="tab" aria-selected="true">
+                                ➖ Add Expense
+                            </button>
+                            <button type="button" class="segment-btn segment-income" id="tabIncomeBtn" role="tab" aria-selected="false">
+                                ➕ Add Income
+                            </button>
+                        </div>
+
+                        <form id="transactionForm" novalidate>
+                            <input type="hidden" id="entryType" value="expense">
+
+                            <div class="form-group">
+                                <label for="entryDescription" id="lblDescription">Expense Description / Name</label>
+                                <input type="text" id="entryDescription" placeholder="e.g. Lunch, Xerox, Stationery" maxlength="80" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entryAmount">Amount (₹)</label>
+                                <div class="currency-input">
+                                    <span>₹</span>
+                                    <input type="number" id="entryAmount" placeholder="0.00" min="0.01" step="any" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entryCategory">Category / Source</label>
+                                <select id="entryCategory" required>
+                                    <!-- Populated dynamically based on type -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entryDate">Date</label>
+                                <input type="date" id="entryDate" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entryNote">Optional Note</label>
+                                <input type="text" id="entryNote" placeholder="e.g. Split with Priya, Receipt saved" maxlength="100">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="entrySubmitBtn">
+                                - Log Expense (+5 XP)
+                            </button>
+
+                            <div id="entryStatusMessage" class="status-message" role="alert"></div>
+                        </form>
+                    </section>
+
+                    <!-- Category-Wise Spending Breakdown -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">
+                                <span>📊</span> Category Spending
+                            </h3>
+                            <small class="stat-hint">Expenses only</small>
+                        </div>
+
+                        <div class="category-breakdown-list" id="categoryBreakdownList">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- Savings Goals Section -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">
+                                <span>🎯</span> Savings Goals
+                            </h3>
+                            <button type="button" class="btn-mini-action" id="openNewGoalBtn">+ New Goal</button>
+                        </div>
+
+                        <div class="goals-container" id="goalsContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <p class="goal-disclaimer">
+                            ℹ️ <em>Savings goals are tracking targets to help you plan; contributing to a goal does not automatically deduct from your live balance.</em>
+                        </p>
+                    </section>
+
+                    <!-- My Badges Section -->
+                    <section class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">
+                                <span>🏅</span> My Badges
+                            </h3>
+                            <small class="stat-hint" id="badgesUnlockedCounter">0 of 6 Unlocked</small>
+                        </div>
+
+                        <div class="badges-grid-section" id="badgesGridSection">
+                            <!-- Populated dynamically with honest unlock states -->
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- RIGHT COLUMN: Unified Transaction History Panel -->
+                <section class="panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <span>📋</span> Transaction History
+                        </h3>
+                        <button type="button" class="btn btn-export" id="exportCsvBtn" title="Export transactions to a spreadsheet CSV file">
+                            📥 Export CSV
+                        </button>
+                    </div>
+
+                    <!-- Search and Multi-Filter Controls -->
+                    <div class="history-controls">
+                        <input type="search" id="searchTransactions" placeholder="🔍 Search by name, category, note..." aria-label="Search transactions">
+                        <select id="filterType" aria-label="Filter transactions by type">
+                            <option value="All">All Types</option>
+                            <option value="expense">➖ Expenses Only</option>
+                            <option value="income">➕ Income Only</option>
+                        </select>
+                        <select id="filterCategory" aria-label="Filter transactions by category">
+                            <option value="All">All Categories</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Transaction Item List -->
+                    <div class="transaction-list" id="transactionList" role="region" aria-live="polite">
+                        <!-- Javascript populates items here -->
+                    </div>
+
+                    <!-- History Footer with Clear All Button -->
+                    <div class="history-footer">
+                        <span class="count-summary" id="shownCount">Showing 0 transactions</span>
+                        <button type="button" class="btn btn-clear" id="clearAllBtn">
+                            🗑️ Clear All
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- GENTLE CELEBRATION TOAST -->
+    <div class="celebration-toast" id="celebrationToast" role="alert">
+        <span class="celebration-icon" id="celebrationIcon">🎉</span>
+        <div class="celebration-body">
+            <strong id="celebrationTitle">Level Up!</strong>
+            <p id="celebrationMessage">You reached a new level!</p>
+        </div>
+        <button type="button" class="celebration-close" id="celebrationCloseBtn" aria-label="Close celebration">&times;</button>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- 1. Settings Modal (Starting Balance & Daily Budget) -->
+    <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="settingsModalTitle">⚙️ Budget &amp; Balance Settings</h3>
+                <button type="button" class="modal-close-btn" id="closeSettingsModalBtn">&times;</button>
+            </div>
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label for="settingStartingBalance">Starting Balance (₹)</label>
+                    <div class="currency-input">
+                        <span>₹</span>
+                        <input type="number" id="settingStartingBalance" min="0" step="any" placeholder="e.g. 600">
+                    </div>
+                    <small class="stat-hint">Your beginning cash in hand or account.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="settingDailyBudget">Daily Spending Budget (₹)</label>
+                    <div class="currency-input">
+                        <span>₹</span>
+                        <input type="number" id="settingDailyBudget" min="0" step="any" placeholder="e.g. 200">
+                    </div>
+                    <small class="stat-hint">Target maximum expenses for each day (0 to disable).</small>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelSettingsModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="width: auto;">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Edit Transaction Modal -->
+    <div class="modal-overlay" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="editModalTitle">✏️ Edit Transaction</h3>
+                <button type="button" class="modal-close-btn" id="closeEditModalBtn">&times;</button>
+            </div>
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTxId">
+
+                <div class="form-group">
+                    <label for="editTxType">Transaction Type</label>
+                    <select id="editTxType" required>
+                        <option value="expense">➖ Expense</option>
+                        <option value="income">➕ Income</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTxDescription">Description</label>
+                    <input type="text" id="editTxDescription" maxlength="80" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTxAmount">Amount (₹)</label>
+                    <div class="currency-input">
+                        <span>₹</span>
+                        <input type="number" id="editTxAmount" min="0.01" step="any" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTxCategory">Category</label>
+                    <select id="editTxCategory" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTxDate">Date</label>
+                    <input type="date" id="editTxDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTxNote">Note</label>
+                    <input type="text" id="editTxNote" maxlength="100">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelEditModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="width: auto;">Update Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. New / Edit Savings Goal Modal -->
+    <div class="modal-overlay" id="goalModal" role="dialog" aria-modal="true" aria-labelledby="goalModalTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="goalModalTitle">🎯 Savings Goal</h3>
+                <button type="button" class="modal-close-btn" id="closeGoalModalBtn">&times;</button>
+            </div>
+            <form id="goalForm">
+                <input type="hidden" id="goalId">
+
+                <div class="form-group">
+                    <label for="goalName">Goal Name</label>
+                    <input type="text" id="goalName" placeholder="e.g. New Headphones, Emergency Fund" maxlength="50" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="goalTarget">Target Amount (₹)</label>
+                    <div class="currency-input">
+                        <span>₹</span>
+                        <input type="number" id="goalTarget" min="1" step="any" placeholder="e.g. 2000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="goalSaved">Currently Saved (₹)</label>
+                    <div class="currency-input">
+                        <span>₹</span>
+                        <input type="number" id="goalSaved" min="0" step="any" placeholder="e.g. 500" value="0">
+                    </div>
+                    <small class="stat-hint">Amount you've already put aside for this goal.</small>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelGoalModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="width: auto;" id="saveGoalSubmitBtn">Save Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Add Savings to Goal Modal -->
+    <div class="modal-overlay" id="addSavingsModal" role="dialog" aria-modal="true" aria-labelledby="addSavingsTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="addSavingsTitle">💰 Add Savings to Goal</h3>
+                <button type="button" class="modal-close-btn" id="closeAddSavingsBtn">&times;</button>
+            </div>
+            <form id="addSavingsForm">
+                <input type="hidden" id="addSavingsGoalId">
+                <p id="addSavingsPromptText" style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 14px;"></p>
+
+                <div class="form-group">
+                    <label for="addSavingsAmount">Amount to Add (₹)</label>
+                    <div class="currency-input">
+                        <span>₹</span>
+                        <input type="number" id="addSavingsAmount" min="0.01" step="any" placeholder="e.g. 100" required>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddSavingsBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="width: auto;">+ Add to Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Daily Expense Tracker &bull; Cute Gamified Money Buddy &bull; 100% Private in Browser
+    </footer>
+
+    <!-- Vanilla JavaScript Implementation -->
+    <script>
+        // Storage Configuration Keys
+        const USERS_STORAGE_KEY = "daily_expense_users_v2";
+        const SESSION_STORAGE_KEY = "daily_expense_current_session_v2";
+        const EXPENSES_PREFIX = "daily_expense_records_";
+        const SETTINGS_PREFIX = "daily_expense_settings_";
+        const GOALS_PREFIX = "daily_expense_goals_";
+        const GAME_PREFIX = "daily_expense_game_";
+        const BACKUP_PREFIX = "daily_expense_backup_v1_";
+
+        // Categories Catalog
+        const EXPENSE_CATEGORIES = {
+            "Food & Snacks": { icon: "🍔", label: "Food & Snacks" },
+            "Education / Xerox": { icon: "📚", label: "Education / Xerox" },
+            "Stationery": { icon: "✏️", label: "Stationery" },
+            "Travel": { icon: "🚌", label: "Travel & Fuel" },
+            "Shopping": { icon: "🛍️", label: "Shopping" },
+            "Entertainment": { icon: "🎬", label: "Entertainment" },
+            "Health": { icon: "💊", label: "Health & Care" },
+            "Other": { icon: "📌", label: "Other Expense" }
+        };
+
+        const INCOME_CATEGORIES = {
+            "Pocket Money": { icon: "💵", label: "Pocket Money" },
+            "Friend / Repayment": { icon: "🤝", label: "Friend / Repayment" },
+            "Scholarship": { icon: "🎓", label: "Scholarship / Grant" },
+            "Salary / Freelance": { icon: "💼", label: "Salary / Freelance" },
+            "Other Income": { icon: "💰", label: "Other Income" }
+        };
+
+        const LEGACY_CAT_MAP = {
+            "Food": "Food & Snacks",
+            "Bills": "Other",
+            "Education": "Education / Xerox",
+            "Travel": "Travel",
+            "Shopping": "Shopping",
+            "Other": "Other"
+        };
+
+        // Badge Definitions
+        const BADGES = {
+            first_step: { id: "first_step", icon: "🐾", name: "First Step", desc: "Record your very first money transaction." },
+            daily_checkin: { id: "daily_checkin", icon: "🌞", name: "Daily Check-in", desc: "Complete a daily check-in with your Money Buddy." },
+            streak_3: { id: "streak_3", icon: "🔥", name: "Three-Day Tracker", desc: "Track transactions on 3 consecutive calendar days." },
+            budget_buddy: { id: "budget_buddy", icon: "🎯", name: "Budget Buddy", desc: "Stay within your daily budget on a day with recorded spending." },
+            goal_getter: { id: "goal_getter", icon: "🏆", name: "Goal Getter", desc: "Reach 100% of a real savings goal target." },
+            consistency_star: { id: "consistency_star", icon: "✨", name: "Consistency Star", desc: "Track transactions on 7 consecutive calendar days." }
+        };
+
+        // Daily Mini-Challenges Catalog
+        const CHALLENGES = [
+            { id: "log_today", title: "Log Today's Spending", desc: "Record at least one expense dated today in your tracker.", icon: "📝" },
+            { id: "check_balance", title: "Review Live Balance", desc: "Verify your current live balance and starting budget.", icon: "🔍" },
+            { id: "daily_budget", title: "Review Daily Budget", desc: "Set or inspect your daily budget limit.", icon: "🎯" },
+            { id: "top_category", title: "Category Check", desc: "Inspect your top spending category breakdown.", icon: "📊" },
+            { id: "goal_progress", title: "Savings Target", desc: "Create or review a savings goal target.", icon: "⭐" }
+        ];
+
+        // DOM Element Helpers
+        const $ = (id) => document.getElementById(id);
+
+        const dom = {
+            headerLevelBadge: $("headerLevelBadge"),
+            headerLevelIcon: $("headerLevelIcon"),
+            headerLevelName: $("headerLevelName"),
+            userProfileBadge: $("userProfileBadge"),
+            userAvatar: $("userAvatar"),
+            headerUserName: $("headerUserName"),
+            headerSettingsBtn: $("headerSettingsBtn"),
+            logoutBtn: $("logoutBtn"),
+
+            authViewContainer: $("authViewContainer"),
+            loginCard: $("loginCard"),
+            registerCard: $("registerCard"),
+            switchToRegisterLink: $("switchToRegisterLink"),
+            switchToLoginLink: $("switchToLoginLink"),
+
+            loginForm: $("loginForm"),
+            loginIdentifier: $("loginIdentifier"),
+            loginPassword: $("loginPassword"),
+            toggleLoginPassword: $("toggleLoginPassword"),
+            loginStatusMessage: $("loginStatusMessage"),
+
+            registerForm: $("registerForm"),
+            registerName: $("registerName"),
+            registerEmail: $("registerEmail"),
+            registerPassword: $("registerPassword"),
+            registerConfirmPassword: $("registerConfirmPassword"),
+            toggleRegisterPassword: $("toggleRegisterPassword"),
+            toggleConfirmPassword: $("toggleConfirmPassword"),
+            registerStatusMessage: $("registerStatusMessage"),
+
+            dashboardView: $("dashboardView"),
+
+            // Gamification elements
+            buddySpeechBubble: $("buddySpeechBubble"),
+            buddyStreakBadge: $("buddyStreakBadge"),
+            dailyCheckInBtn: $("dailyCheckInBtn"),
+            levelCardIcon: $("levelCardIcon"),
+            levelCardName: $("levelCardName"),
+            levelXpCounter: $("levelXpCounter"),
+            levelProgressBar: $("levelProgressBar"),
+            levelProgressText: $("levelProgressText"),
+            levelRankTag: $("levelRankTag"),
+
+            challengeIcon: $("challengeIcon"),
+            challengeDescText: $("challengeDescText"),
+            challengeStatusTag: $("challengeStatusTag"),
+            challengeActionBtn: $("challengeActionBtn"),
+
+            startingBalanceDisplay: $("startingBalanceDisplay"),
+            editStartingBalanceBtn: $("editStartingBalanceBtn"),
+            totalIncomeDisplay: $("totalIncomeDisplay"),
+            incomeCountHint: $("incomeCountHint"),
+            totalExpensesDisplay: $("totalExpensesDisplay"),
+            expenseCountHint: $("expenseCountHint"),
+            currentBalanceDisplay: $("currentBalanceDisplay"),
+
+            budgetHintText: $("budgetHintText"),
+            todaySpentDisplay: $("todaySpentDisplay"),
+            dailyBudgetDisplay: $("dailyBudgetDisplay"),
+            todayRemainingDisplay: $("todayRemainingDisplay"),
+            editDailyBudgetBtn: $("editDailyBudgetBtn"),
+            budgetProgressBar: $("budgetProgressBar"),
+            budgetAlertMessage: $("budgetAlertMessage"),
+            budgetPercentText: $("budgetPercentText"),
+
+            // Recap Card
+            recapDateDisplay: $("recapDateDisplay"),
+            recapIncomeVal: $("recapIncomeVal"),
+            recapExpenseVal: $("recapExpenseVal"),
+            recapNetVal: $("recapNetVal"),
+            recapTxCountVal: $("recapTxCountVal"),
+            recapTopCatVal: $("recapTopCatVal"),
+
+            // Form
+            formPanelTitle: $("formPanelTitle"),
+            tabExpenseBtn: $("tabExpenseBtn"),
+            tabIncomeBtn: $("tabIncomeBtn"),
+            transactionForm: $("transactionForm"),
+            entryType: $("entryType"),
+            lblDescription: $("lblDescription"),
+            entryDescription: $("entryDescription"),
+            entryAmount: $("entryAmount"),
+            entryCategory: $("entryCategory"),
+            entryDate: $("entryDate"),
+            entryNote: $("entryNote"),
+            entrySubmitBtn: $("entrySubmitBtn"),
+            entryStatusMessage: $("entryStatusMessage"),
+
+            categoryBreakdownList: $("categoryBreakdownList"),
+            goalsContainer: $("goalsContainer"),
+            openNewGoalBtn: $("openNewGoalBtn"),
+            badgesGridSection: $("badgesGridSection"),
+            badgesUnlockedCounter: $("badgesUnlockedCounter"),
+
+            exportCsvBtn: $("exportCsvBtn"),
+            searchTransactions: $("searchTransactions"),
+            filterType: $("filterType"),
+            filterCategory: $("filterCategory"),
+            transactionList: $("transactionList"),
+            shownCount: $("shownCount"),
+            clearAllBtn: $("clearAllBtn"),
+
+            celebrationToast: $("celebrationToast"),
+            celebrationIcon: $("celebrationIcon"),
+            celebrationTitle: $("celebrationTitle"),
+            celebrationMessage: $("celebrationMessage"),
+            celebrationCloseBtn: $("celebrationCloseBtn"),
+
+            settingsModal: $("settingsModal"),
+            closeSettingsModalBtn: $("closeSettingsModalBtn"),
+            cancelSettingsModalBtn: $("cancelSettingsModalBtn"),
+            settingsForm: $("settingsForm"),
+            settingStartingBalance: $("settingStartingBalance"),
+            settingDailyBudget: $("settingDailyBudget"),
+
+            editModal: $("editModal"),
+            closeEditModalBtn: $("closeEditModalBtn"),
+            cancelEditModalBtn: $("cancelEditModalBtn"),
+            editTransactionForm: $("editTransactionForm"),
+            editTxId: $("editTxId"),
+            editTxType: $("editTxType"),
+            editTxDescription: $("editTxDescription"),
+            editTxAmount: $("editTxAmount"),
+            editTxCategory: $("editTxCategory"),
+            editTxDate: $("editTxDate"),
+            editTxNote: $("editTxNote"),
+
+            goalModal: $("goalModal"),
+            goalModalTitle: $("goalModalTitle"),
+            closeGoalModalBtn: $("closeGoalModalBtn"),
+            cancelGoalModalBtn: $("cancelGoalModalBtn"),
+            goalForm: $("goalForm"),
+            goalId: $("goalId"),
+            goalName: $("goalName"),
+            goalTarget: $("goalTarget"),
+            goalSaved: $("goalSaved"),
+
+            addSavingsModal: $("addSavingsModal"),
+            closeAddSavingsBtn: $("closeAddSavingsBtn"),
+            cancelAddSavingsBtn: $("cancelAddSavingsBtn"),
+            addSavingsForm: $("addSavingsForm"),
+            addSavingsGoalId: $("addSavingsGoalId"),
+            addSavingsPromptText: $("addSavingsPromptText"),
+            addSavingsAmount: $("addSavingsAmount")
+        };
+
+        // Application State
+        let currentUser = null;
+        let transactionState = [];
+        let userSettings = { startingBalance: 0, dailyBudget: 0 };
+        let savingsGoals = [];
+        let gameData = {
+            xp: 0,
+            lastCheckInDate: null,
+            awardedTxIds: [],
+            completedChallenges: {},
+            unlockedBadges: {},
+            celebratedEvents: {}
+        };
+
+        // SHA-256 Client-Side Hash Implementation (Pure JS + WebCrypto)
+        function sha256PureJs(ascii) {
+            function rightRotate(value, amount) {
+                return (value >>> amount) | (value << (32 - amount));
+            }
+            const words = [];
+            const asciiBitLength = ascii.length * 8;
+            const hash = [
+                0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+                0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+            ];
+            const k = [
+                0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+                0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+                0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+                0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+                0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+                0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+                0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+                0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+            ];
+
+            for (let i = 0; i < ascii.length; i++) {
+                words[i >> 2] |= ascii.charCodeAt(i) << ((3 - i % 4) * 8);
+            }
+            words[asciiBitLength >> 5] |= 0x80 << ((3 - (asciiBitLength % 32) / 8) * 8);
+            words[(((asciiBitLength + 64) >> 9) << 4) + 15] = asciiBitLength;
+
+            const w = new Array(64);
+            for (let i = 0; i < words.length; i += 16) {
+                let [a, b, c, d, e, f, g, h] = hash;
+                for (let j = 0; j < 64; j++) {
+                    if (j < 16) {
+                        w[j] = words[i + j] | 0;
+                    } else {
+                        const s0 = rightRotate(w[j - 15], 7) ^ rightRotate(w[j - 15], 18) ^ (w[j - 15] >>> 3);
+                        const s1 = rightRotate(w[j - 2], 17) ^ rightRotate(w[j - 2], 19) ^ (w[j - 2] >>> 10);
+                        w[j] = (w[j - 16] + s0 + w[j - 7] + s1) | 0;
+                    }
+                    const s1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
+                    const ch = (e & f) ^ ((~e) & g);
+                    const temp1 = (h + s1 + ch + k[j] + w[j]) | 0;
+                    const s0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
+                    const maj = (a & b) ^ (a & c) ^ (b & c);
+                    const temp2 = (s0 + maj) | 0;
+
+                    h = g;
+                    g = f;
+                    f = e;
+                    e = (d + temp1) | 0;
+                    d = c;
+                    c = b;
+                    b = a;
+                    a = (temp1 + temp2) | 0;
+                }
+                hash[0] = (hash[0] + a) | 0;
+                hash[1] = (hash[1] + b) | 0;
+                hash[2] = (hash[2] + c) | 0;
+                hash[3] = (hash[3] + d) | 0;
+                hash[4] = (hash[4] + e) | 0;
+                hash[5] = (hash[5] + f) | 0;
+                hash[6] = (hash[6] + g) | 0;
+                hash[7] = (hash[7] + h) | 0;
+            }
+            let res = '';
+            for (let i = 0; i < 8; i++) {
+                for (let j = 3; j >= 0; j--) {
+                    const b = (hash[i] >> (j * 8)) & 255;
+                    res += (b < 16 ? '0' : '') + b.toString(16);
+                }
+            }
+            return res;
+        }
+
+        async function hashPassword(plainPassword, salt = "expense_salt_v2_") {
+            const salted = salt + plainPassword;
+            if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+                try {
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(salted);
+                    const buffer = await window.crypto.subtle.digest("SHA-256", data);
+                    return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+                } catch (e) {}
+            }
+            return sha256PureJs(salted);
+        }
+
+        function setupPasswordToggle(toggleBtn, inputEl) {
+            if (!toggleBtn || !inputEl) return;
+            toggleBtn.addEventListener("click", () => {
+                const isPassword = inputEl.type === "password";
+                inputEl.type = isPassword ? "text" : "password";
+                toggleBtn.textContent = isPassword ? "🙈" : "👁️";
+                toggleBtn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+            });
+        }
+        setupPasswordToggle(dom.toggleLoginPassword, dom.loginPassword);
+        setupPasswordToggle(dom.toggleRegisterPassword, dom.registerPassword);
+        setupPasswordToggle(dom.toggleConfirmPassword, dom.registerConfirmPassword);
+
+        function showMessage(el, text, type = "success", duration = 4000) {
+            if (!el) return;
+            el.textContent = text;
+            el.className = `status-message ${type}`;
+            setTimeout(() => {
+                if (el.textContent === text) {
+                    el.className = "status-message";
+                    el.textContent = "";
+                }
+            }, duration);
+        }
+
+        function sanitizeId(str) {
+            return String(str || "").toLowerCase().replace(/[^a-z0-9]/g, "_");
+        }
+
+        function getStoredUsers() {
+            try {
+                const raw = localStorage.getItem(USERS_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveStoredUsers(users) {
+            try {
+                localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        function getTodayDateString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const day = String(today.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return "";
+            const parts = dateStr.split("-");
+            if (parts.length !== 3) return dateStr;
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            const dateObj = new Date(year, month, day);
+            return dateObj.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+        function formatCurrency(amount) {
+            const num = Number(amount) || 0;
+            return "₹" + num.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // --- GAMIFICATION LOGIC (XP, LEVELS, STREAKS, BADGES, CELEBRATIONS) ---
+
+        function getLevelInfo(xp) {
+            if (xp >= 100) {
+                return { level: 4, name: "Money Master", icon: "👑", currentXp: xp, nextXp: 100, pct: 100, isMax: true };
+            }
+            if (xp >= 60) {
+                return { level: 3, name: "Saving Star", icon: "⭐", currentXp: xp - 60, nextXp: 40, pct: Math.min(100, Math.round(((xp - 60) / 40) * 100)), isMax: false };
+            }
+            if (xp >= 25) {
+                return { level: 2, name: "Budget Explorer", icon: "🐻", currentXp: xp - 25, nextXp: 35, pct: Math.min(100, Math.round(((xp - 25) / 35) * 100)), isMax: false };
+            }
+            return { level: 1, name: "Money Seed", icon: "🌱", currentXp: xp, nextXp: 25, pct: Math.min(100, Math.round((xp / 25) * 100)), isMax: false };
+        }
+
+        function calculateTrackingStreak(transactions) {
+            if (!transactions || transactions.length === 0) return 0;
+
+            const dates = Array.from(new Set(transactions.map(t => t.date))).sort().reverse();
+            if (dates.length === 0) return 0;
+
+            const today = getTodayDateString();
+            const d = new Date();
+            d.setDate(d.getDate() - 1);
+            const yesterday = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, "0") + '-' + String(d.getDate()).padStart(2, "0");
+
+            if (dates[0] !== today && dates[0] !== yesterday) {
+                return 0;
+            }
+
+            let streak = 0;
+            let expectedDate = new Date(dates[0]);
+
+            for (const dateStr of dates) {
+                const currentDate = new Date(dateStr);
+                const diffDays = Math.round((expectedDate - currentDate) / (1000 * 60 * 60 * 24));
+                if (diffDays === 0) {
+                    streak++;
+                    expectedDate.setDate(expectedDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+
+            return streak;
+        }
+
+        function getTodayChallenge() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            const challengeIndex = dayOfYear % CHALLENGES.length;
+            return CHALLENGES[challengeIndex];
+        }
+
+        let toastTimer = null;
+        function triggerCelebration(eventId, title, message, icon = "🎉") {
+            if (gameData.celebratedEvents[eventId]) return;
+
+            gameData.celebratedEvents[eventId] = true;
+            saveUserGameData();
+
+            dom.celebrationIcon.textContent = icon;
+            dom.celebrationTitle.textContent = title;
+            dom.celebrationMessage.textContent = message;
+            dom.celebrationToast.style.display = "flex";
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                dom.celebrationToast.style.display = "none";
+            }, 4500);
+        }
+
+        dom.celebrationCloseBtn.addEventListener("click", () => {
+            dom.celebrationToast.style.display = "none";
+        });
+
+        function addXp(amount, reason = "") {
+            const oldInfo = getLevelInfo(gameData.xp);
+            gameData.xp += amount;
+            saveUserGameData();
+
+            const newInfo = getLevelInfo(gameData.xp);
+            if (newInfo.level > oldInfo.level) {
+                triggerCelebration(`level_${newInfo.level}`, "Level Up! 🌟", `Congratulations! You reached Level ${newInfo.level}: ${newInfo.name}!`, newInfo.icon);
+            }
+
+            updateAllCalculationsAndUI();
+        }
+
+        function checkBadgeUnlocks() {
+            const todayStr = getTodayDateString();
+            const streak = calculateTrackingStreak(transactionState);
+
+            const todayExpenses = transactionState
+                .filter(t => t.type === "expense" && t.date === todayStr)
+                .reduce((s, t) => s + t.amount, 0);
+
+            // 1. First Step
+            if (transactionState.length >= 1 && !gameData.unlockedBadges.first_step) {
+                gameData.unlockedBadges.first_step = todayStr;
+                triggerCelebration("badge_first_step", "Badge Unlocked! 🐾", "First Step — Logged your first money record!", "🐾");
+            }
+
+            // 2. Daily Check-in
+            if (gameData.lastCheckInDate && !gameData.unlockedBadges.daily_checkin) {
+                gameData.unlockedBadges.daily_checkin = todayStr;
+                triggerCelebration("badge_daily_checkin", "Badge Unlocked! 🌞", "Daily Check-in — Built your daily habit!", "🌞");
+            }
+
+            // 3. Three-Day Tracker
+            if (streak >= 3 && !gameData.unlockedBadges.streak_3) {
+                gameData.unlockedBadges.streak_3 = todayStr;
+                triggerCelebration("badge_streak_3", "Badge Unlocked! 🔥", "Three-Day Tracker — Tracked 3 days in a row!", "🔥");
+            }
+
+            // 4. Budget Buddy
+            if (userSettings.dailyBudget > 0 && todayExpenses > 0 && todayExpenses <= userSettings.dailyBudget && !gameData.unlockedBadges.budget_buddy) {
+                gameData.unlockedBadges.budget_buddy = todayStr;
+                triggerCelebration("badge_budget_buddy", "Badge Unlocked! 🎯", "Budget Buddy — Stayed within daily budget!", "🎯");
+            }
+
+            // 5. Goal Getter
+            if (savingsGoals.some(g => g.saved >= g.target) && !gameData.unlockedBadges.goal_getter) {
+                gameData.unlockedBadges.goal_getter = todayStr;
+                triggerCelebration("badge_goal_getter", "Badge Unlocked! 🏆", "Goal Getter — Completed a savings goal!", "🏆");
+            }
+
+            // 6. Consistency Star
+            if (streak >= 7 && !gameData.unlockedBadges.consistency_star) {
+                gameData.unlockedBadges.consistency_star = todayStr;
+                triggerCelebration("badge_consistency_star", "Badge Unlocked! ✨", "Consistency Star — 7 days consistent tracking!", "✨");
+            }
+
+            saveUserGameData();
+        }
+
+        // Daily Check-In Handler
+        dom.dailyCheckInBtn.addEventListener("click", () => {
+            const todayStr = getTodayDateString();
+            if (gameData.lastCheckInDate === todayStr) return;
+
+            gameData.lastCheckInDate = todayStr;
+            addXp(5, "Daily Check-in completed!");
+            checkBadgeUnlocks();
+            triggerCelebration(`checkin_${todayStr}`, "Checked In! 🌞", "+5 XP earned for keeping your money diary updated!", "🌞");
+        });
+
+        // Daily Challenge Verification Action
+        dom.challengeActionBtn.addEventListener("click", () => {
+            const todayStr = getTodayDateString();
+            if (gameData.completedChallenges[todayStr]) return;
+
+            const challenge = getTodayChallenge();
+            let isSatisfied = false;
+
+            if (challenge.id === "log_today") {
+                isSatisfied = transactionState.some(t => t.type === "expense" && t.date === todayStr);
+                if (!isSatisfied) {
+                    alert("Please record at least one expense dated today in the form below to complete this quest! 📝");
+                    return;
+                }
+            } else if (challenge.id === "check_balance") {
+                isSatisfied = true; // Viewing/checking balance
+            } else if (challenge.id === "daily_budget") {
+                if (userSettings.dailyBudget > 0) {
+                    isSatisfied = true;
+                } else {
+                    openSettingsModal();
+                    alert("Please configure your daily spending budget to complete this quest! 🎯");
+                    return;
+                }
+            } else if (challenge.id === "top_category") {
+                isSatisfied = transactionState.some(t => t.type === "expense");
+                if (!isSatisfied) {
+                    alert("Log at least one expense to view your category spending breakdown! 📊");
+                    return;
+                }
+            } else if (challenge.id === "goal_progress") {
+                if (savingsGoals.length > 0) {
+                    isSatisfied = true;
+                } else {
+                    openGoalModal();
+                    alert("Create at least one savings goal target to complete this quest! ⭐");
+                    return;
+                }
+            }
+
+            if (isSatisfied) {
+                gameData.completedChallenges[todayStr] = true;
+                addXp(10, "Daily Challenge completed!");
+                triggerCelebration(`challenge_${todayStr}`, "Quest Completed! ⭐", `+10 XP earned for completing: "${challenge.title}"!`, "⭐");
+                checkBadgeUnlocks();
+            }
+        });
+
+        // --- DATA LOAD & PERSISTENCE ---
+
+        function loadUserData(email) {
+            const clean = sanitizeId(email);
+            const recKey = EXPENSES_PREFIX + clean;
+            const setKey = SETTINGS_PREFIX + clean;
+            const goalKey = GOALS_PREFIX + clean;
+            const gameKey = GAME_PREFIX + clean;
+            const bkpKey = BACKUP_PREFIX + clean;
+
+            // 1. Settings
+            try {
+                const rawSet = localStorage.getItem(setKey);
+                if (rawSet) {
+                    const parsed = JSON.parse(rawSet);
+                    userSettings = {
+                        startingBalance: Number.isFinite(parsed.startingBalance) && parsed.startingBalance >= 0 ? parsed.startingBalance : 0,
+                        dailyBudget: Number.isFinite(parsed.dailyBudget) && parsed.dailyBudget >= 0 ? parsed.dailyBudget : 0
+                    };
+                } else {
+                    userSettings = { startingBalance: 0, dailyBudget: 0 };
+                }
+            } catch {
+                userSettings = { startingBalance: 0, dailyBudget: 0 };
+            }
+
+            // 2. Goals
+            try {
+                const rawGoals = localStorage.getItem(goalKey);
+                savingsGoals = rawGoals ? JSON.parse(rawGoals) : [];
+                if (!Array.isArray(savingsGoals)) savingsGoals = [];
+            } catch {
+                savingsGoals = [];
+            }
+
+            // 3. Gamification State
+            try {
+                const rawGame = localStorage.getItem(gameKey);
+                if (rawGame) {
+                    const parsed = JSON.parse(rawGame);
+                    gameData = {
+                        xp: Number(parsed.xp) || 0,
+                        lastCheckInDate: parsed.lastCheckInDate || null,
+                        awardedTxIds: Array.isArray(parsed.awardedTxIds) ? parsed.awardedTxIds : [],
+                        completedChallenges: typeof parsed.completedChallenges === "object" && parsed.completedChallenges ? parsed.completedChallenges : {},
+                        unlockedBadges: typeof parsed.unlockedBadges === "object" && parsed.unlockedBadges ? parsed.unlockedBadges : {},
+                        celebratedEvents: typeof parsed.celebratedEvents === "object" && parsed.celebratedEvents ? parsed.celebratedEvents : {}
+                    };
+                } else {
+                    gameData = { xp: 0, lastCheckInDate: null, awardedTxIds: [], completedChallenges: {}, unlockedBadges: {}, celebratedEvents: {} };
+                }
+            } catch {
+                gameData = { xp: 0, lastCheckInDate: null, awardedTxIds: [], completedChallenges: {}, unlockedBadges: {}, celebratedEvents: {} };
+            }
+
+            // 4. Transactions (with safe migration)
+            try {
+                let rawRecords = localStorage.getItem(recKey);
+                if (!rawRecords) {
+                    const legacyGlobal = localStorage.getItem("daily_expense_tracker_data_v1");
+                    if (legacyGlobal) rawRecords = legacyGlobal;
+                }
+
+                if (!rawRecords) {
+                    transactionState = [];
+                    return;
+                }
+
+                if (!localStorage.getItem(bkpKey)) {
+                    try { localStorage.setItem(bkpKey, rawRecords); } catch (e) {}
+                }
+
+                const parsed = JSON.parse(rawRecords);
+                if (!Array.isArray(parsed)) {
+                    transactionState = [];
+                    return;
+                }
+
+                const migrated = [];
+                const seenIds = new Set();
+
+                for (const item of parsed) {
+                    if (!item || typeof item !== "object") continue;
+                    const id = String(item.id || Date.now() + "-" + Math.random().toString(36).substr(2, 6));
+                    if (seenIds.has(id)) continue;
+                    seenIds.add(id);
+
+                    const type = item.type === "income" ? "income" : "expense";
+                    const amount = Number(item.amount);
+                    if (!Number.isFinite(amount) || amount <= 0) continue;
+
+                    let description = item.description || item.name || "Transaction";
+                    description = String(description).trim();
+
+                    let category = item.category || "Other";
+                    if (LEGACY_CAT_MAP[category]) category = LEGACY_CAT_MAP[category];
+
+                    const date = (typeof item.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(item.date)) ? item.date : getTodayDateString();
+                    const note = typeof item.note === "string" ? item.note : "";
+
+                    migrated.push({
+                        id,
+                        type,
+                        description,
+                        name: description,
+                        category,
+                        amount: Math.round(amount * 100) / 100,
+                        date,
+                        note
+                    });
+                }
+
+                transactionState = migrated;
+                saveUserTransactions();
+            } catch (err) {
+                console.error("Data load error:", err);
+                transactionState = [];
+            }
+        }
+
+        function saveUserTransactions() {
+            if (!currentUser) return false;
+            try {
+                const key = EXPENSES_PREFIX + sanitizeId(currentUser.email);
+                localStorage.setItem(key, JSON.stringify(transactionState));
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function saveUserSettings() {
+            if (!currentUser) return false;
+            try {
+                const key = SETTINGS_PREFIX + sanitizeId(currentUser.email);
+                localStorage.setItem(key, JSON.stringify(userSettings));
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function saveUserGoals() {
+            if (!currentUser) return false;
+            try {
+                const key = GOALS_PREFIX + sanitizeId(currentUser.email);
+                localStorage.setItem(key, JSON.stringify(savingsGoals));
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function saveUserGameData() {
+            if (!currentUser) return false;
+            try {
+                const key = GAME_PREFIX + sanitizeId(currentUser.email);
+                localStorage.setItem(key, JSON.stringify(gameData));
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function populateCategoryDropdown(selectEl, type, selectedVal = "") {
+            selectEl.innerHTML = "";
+            const catMap = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+            Object.keys(catMap).forEach(key => {
+                const opt = document.createElement("option");
+                opt.value = key;
+                opt.textContent = `${catMap[key].icon} ${catMap[key].label}`;
+                if (key === selectedVal) opt.selected = true;
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function populateFilterCategoryDropdown() {
+            const currentSelected = dom.filterCategory.value;
+            dom.filterCategory.innerHTML = `<option value="All">All Categories</option>`;
+
+            const allCategories = new Set();
+            transactionState.forEach(tx => {
+                if (tx.category) allCategories.add(tx.category);
+            });
+            Object.keys(EXPENSE_CATEGORIES).forEach(k => allCategories.add(k));
+            Object.keys(INCOME_CATEGORIES).forEach(k => allCategories.add(k));
+
+            allCategories.forEach(cat => {
+                const icon = EXPENSE_CATEGORIES[cat]?.icon || INCOME_CATEGORIES[cat]?.icon || "📌";
+                const opt = document.createElement("option");
+                opt.value = cat;
+                opt.textContent = `${icon} ${cat}`;
+                if (cat === currentSelected) opt.selected = true;
+                dom.filterCategory.appendChild(opt);
+            });
+        }
+
+        // Context-Aware Mascot Dialogue
+        function getMascotMessage(currentBalance, todayExpenses, dailyBudget, goalsCompleted) {
+            const todayStr = getTodayDateString();
+            if (goalsCompleted) {
+                return "You did it! Goal completed! 🎉 You're an amazing saver!";
+            }
+            if (dailyBudget > 0 && todayExpenses > dailyBudget) {
+                return "Today's budget has been crossed. Let's plan calmly for tomorrow. 🌷";
+            }
+            if (dailyBudget > 0 && todayExpenses >= dailyBudget * 0.8) {
+                return "Psst! You're getting close to today's budget. Let's take it easy! 👀";
+            }
+            if (gameData.lastCheckInDate === todayStr) {
+                return "Thanks for checking in today! Your money diary is looking great. 🐾";
+            }
+            if (currentBalance > 0) {
+                return "Nice! You're keeping track of your money so well! 💜";
+            }
+            return `Hey ${currentUser ? currentUser.name : "there"}! Ready to check your money today? 🐻`;
+        }
+
+        // Master UI & Calculations Render
+        function updateAllCalculationsAndUI() {
+            const starting = userSettings.startingBalance || 0;
+
+            let totalIncome = 0;
+            let incomeCount = 0;
+            let totalExpenses = 0;
+            let expenseCount = 0;
+
+            const todayStr = getTodayDateString();
+            let todayExpenses = 0;
+            let todayIncome = 0;
+            let todayTxCount = 0;
+            const categoryExpenseTotals = {};
+            const todayCategoryExpenseTotals = {};
+
+            transactionState.forEach(tx => {
+                if (tx.type === "income") {
+                    totalIncome += tx.amount;
+                    incomeCount++;
+                    if (tx.date === todayStr) {
+                        todayIncome += tx.amount;
+                        todayTxCount++;
+                    }
+                } else {
+                    totalExpenses += tx.amount;
+                    expenseCount++;
+                    categoryExpenseTotals[tx.category] = (categoryExpenseTotals[tx.category] || 0) + tx.amount;
+
+                    if (tx.date === todayStr) {
+                        todayExpenses += tx.amount;
+                        todayTxCount++;
+                        todayCategoryExpenseTotals[tx.category] = (todayCategoryExpenseTotals[tx.category] || 0) + tx.amount;
+                    }
+                }
+            });
+
+            // Live Balance Formula (Preserved exactly)
+            const currentBalance = starting + totalIncome - totalExpenses;
+
+            // 1. Top 4 Cards
+            dom.startingBalanceDisplay.textContent = formatCurrency(starting);
+            dom.totalIncomeDisplay.textContent = `+${formatCurrency(totalIncome)}`;
+            dom.incomeCountHint.textContent = `${incomeCount} income ${incomeCount === 1 ? 'entry' : 'entries'}`;
+            dom.totalExpensesDisplay.textContent = `-${formatCurrency(totalExpenses)}`;
+            dom.expenseCountHint.textContent = `${expenseCount} expense ${expenseCount === 1 ? 'entry' : 'entries'}`;
+            dom.currentBalanceDisplay.textContent = formatCurrency(currentBalance);
+
+            // 2. Daily Budget Card
+            const dailyBudget = userSettings.dailyBudget || 0;
+            dom.todaySpentDisplay.textContent = formatCurrency(todayExpenses);
+            dom.dailyBudgetDisplay.textContent = dailyBudget > 0 ? formatCurrency(dailyBudget) : "Not Set";
+
+            const remainingBudget = dailyBudget - todayExpenses;
+            dom.todayRemainingDisplay.textContent = dailyBudget > 0 ? formatCurrency(Math.max(0, remainingBudget)) : "—";
+
+            if (dailyBudget <= 0) {
+                dom.budgetProgressBar.style.width = "0%";
+                dom.budgetProgressBar.className = "progress-bar-fill";
+                dom.budgetPercentText.textContent = "No Budget Set";
+                dom.budgetAlertMessage.textContent = "Set a daily budget to track your spending progress.";
+            } else {
+                const percent = Math.min(100, Math.round((todayExpenses / dailyBudget) * 100));
+                dom.budgetProgressBar.style.width = `${percent}%`;
+                dom.budgetPercentText.textContent = `${percent}% Used`;
+
+                if (todayExpenses > dailyBudget) {
+                    dom.budgetProgressBar.className = "progress-bar-fill exceeded";
+                    dom.budgetAlertMessage.textContent = `⚠️ Your daily budget is over. Try to avoid unnecessary spending.`;
+                } else if (todayExpenses >= dailyBudget * 0.8) {
+                    dom.budgetProgressBar.className = "progress-bar-fill warning";
+                    dom.budgetAlertMessage.textContent = `⚠️ Careful! You're getting close to your daily budget.`;
+                } else {
+                    dom.budgetProgressBar.className = "progress-bar-fill";
+                    dom.budgetAlertMessage.textContent = "🎉 You're doing great! Keep tracking your spending.";
+                }
+            }
+
+            // 3. Today's Money Recap Card
+            dom.recapDateDisplay.textContent = formatDateDisplay(todayStr);
+            dom.recapIncomeVal.textContent = `+${formatCurrency(todayIncome)}`;
+            dom.recapExpenseVal.textContent = `-${formatCurrency(todayExpenses)}`;
+
+            const netChange = todayIncome - todayExpenses;
+            dom.recapNetVal.textContent = (netChange >= 0 ? "+" : "") + formatCurrency(netChange);
+            dom.recapNetVal.style.color = netChange >= 0 ? "var(--success)" : "var(--danger)";
+            dom.recapTxCountVal.textContent = todayTxCount;
+
+            const topCatEntries = Object.entries(todayCategoryExpenseTotals).sort((a, b) => b[1] - a[1]);
+            dom.recapTopCatVal.textContent = topCatEntries.length > 0 ? `${topCatEntries[0][0]} (${formatCurrency(topCatEntries[0][1])})` : "None yet 🐾";
+
+            // 4. Gamification: Level & XP UI
+            const levelInfo = getLevelInfo(gameData.xp);
+            dom.headerLevelIcon.textContent = levelInfo.icon;
+            dom.headerLevelName.textContent = levelInfo.name;
+            dom.levelCardIcon.textContent = levelInfo.icon;
+            dom.levelCardName.textContent = levelInfo.name;
+            dom.levelXpCounter.textContent = `${gameData.xp} XP`;
+            dom.levelProgressBar.style.width = `${levelInfo.pct}%`;
+            dom.levelProgressText.textContent = levelInfo.isMax ? "Max Level Reached! 👑" : `${levelInfo.currentXp} / ${levelInfo.nextXp} XP to Level ${levelInfo.level + 1}`;
+            dom.levelRankTag.textContent = `Level ${levelInfo.level} of 4`;
+
+            // 5. Mascot & Streak UI
+            const streak = calculateTrackingStreak(transactionState);
+            dom.buddyStreakBadge.textContent = `🔥 ${streak}-day streak`;
+
+            const goalsCompleted = savingsGoals.some(g => g.saved >= g.target);
+            dom.buddySpeechBubble.textContent = getMascotMessage(currentBalance, todayExpenses, dailyBudget, goalsCompleted);
+
+            const isCheckedInToday = gameData.lastCheckInDate === todayStr;
+            dom.dailyCheckInBtn.disabled = isCheckedInToday;
+            dom.dailyCheckInBtn.textContent = isCheckedInToday ? "✅ Checked In Today" : "🌞 Daily Check-In (+5 XP)";
+
+            // 6. Daily Challenge Card
+            const challenge = getTodayChallenge();
+            dom.challengeIcon.textContent = challenge.icon;
+            dom.challengeDescText.textContent = challenge.desc;
+
+            const isChallengeDone = !!gameData.completedChallenges[todayStr];
+            dom.challengeStatusTag.textContent = isChallengeDone ? "Completed! ⭐" : "In Progress";
+            dom.challengeStatusTag.className = `challenge-status-tag ${isChallengeDone ? 'completed' : ''}`;
+            dom.challengeActionBtn.disabled = isChallengeDone;
+            dom.challengeActionBtn.textContent = isChallengeDone ? "Completed" : "Verify Quest";
+
+            // 7. Render Badges
+            checkBadgeUnlocks();
+            renderBadgesGrid();
+
+            // 8. Render Category Breakdown
+            renderCategoryBreakdown(categoryExpenseTotals, totalExpenses);
+
+            // 9. Render Savings Goals
+            renderSavingsGoals();
+
+            // 10. Render Transactions
+            renderTransactions();
+
+            // 11. Dropdowns
+            populateFilterCategoryDropdown();
+        }
+
+        // Render My Badges Grid
+        function renderBadgesGrid() {
+            dom.badgesGridSection.innerHTML = "";
+            let unlockedCount = 0;
+
+            Object.values(BADGES).forEach(b => {
+                const isUnlocked = !!gameData.unlockedBadges[b.id];
+                if (isUnlocked) unlockedCount++;
+
+                const box = document.createElement("div");
+                box.className = `badge-box-item ${isUnlocked ? 'unlocked' : ''}`;
+                box.title = b.desc;
+                box.innerHTML = `
+                    <div class="badge-icon-slot">${b.icon}</div>
+                    <div class="badge-info-slot">
+                        <strong>${escapeHtml(b.name)}</strong>
+                        <span>${isUnlocked ? 'Unlocked ⭐' : escapeHtml(b.desc)}</span>
+                    </div>
+                `;
+                dom.badgesGridSection.appendChild(box);
+            });
+
+            dom.badgesUnlockedCounter.textContent = `${unlockedCount} of 6 Unlocked`;
+        }
+
+        // Render Category Breakdown (CSS Bars)
+        function renderCategoryBreakdown(catTotals, totalExpenses) {
+            dom.categoryBreakdownList.innerHTML = "";
+
+            const entries = Object.entries(catTotals).filter(([_, amt]) => amt > 0);
+            if (entries.length === 0) {
+                dom.categoryBreakdownList.innerHTML = `
+                    <div style="text-align: center; padding: 18px 10px; color: var(--text-light); font-size: 12.5px;">
+                        No expense records yet to display breakdown.
+                    </div>
+                `;
+                return;
+            }
+
+            entries.sort((a, b) => b[1] - a[1]);
+
+            entries.forEach(([cat, amt]) => {
+                const pct = totalExpenses > 0 ? Math.round((amt / totalExpenses) * 100) : 0;
+                const icon = EXPENSE_CATEGORIES[cat]?.icon || "📌";
+
+                const row = document.createElement("div");
+                row.className = "cat-bar-item";
+                row.innerHTML = `
+                    <div class="cat-bar-header">
+                        <span class="cat-bar-title">${icon} ${escapeHtml(cat)}</span>
+                        <div>
+                            <span class="cat-bar-amount">${formatCurrency(amt)}</span>
+                            <span style="font-size: 11px; color: var(--text-light); margin-left: 4px;">(${pct}%)</span>
+                        </div>
+                    </div>
+                    <div class="cat-track">
+                        <div class="cat-fill" style="width: ${pct}%;"></div>
+                    </div>
+                `;
+                dom.categoryBreakdownList.appendChild(row);
+            });
+        }
+
+        // Render Savings Goals
+        function renderSavingsGoals() {
+            dom.goalsContainer.innerHTML = "";
+
+            if (savingsGoals.length === 0) {
+                dom.goalsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 18px 10px; color: var(--text-light); font-size: 12.5px;">
+                        No savings targets yet. Click "+ New Goal" to set one!
+                    </div>
+                `;
+                return;
+            }
+
+            savingsGoals.forEach(g => {
+                const target = Number(g.target) || 1;
+                const saved = Number(g.saved) || 0;
+                const pct = Math.min(100, Math.round((saved / target) * 100));
+                const remaining = Math.max(0, target - saved);
+                const isCompleted = saved >= target;
+
+                const card = document.createElement("div");
+                card.className = "goal-item-card";
+                card.innerHTML = `
+                    <div class="goal-item-top">
+                        <span class="goal-title">${isCompleted ? '🎉' : '🎯'} ${escapeHtml(g.name)}</span>
+                        <span style="font-size: 11.5px; font-weight: 700; color: ${isCompleted ? 'var(--success)' : 'var(--primary)'};">
+                            ${pct}% ${isCompleted ? 'Completed' : ''}
+                        </span>
+                    </div>
+                    <div class="goal-amounts">
+                        <span>Saved: <strong>${formatCurrency(saved)}</strong> of ${formatCurrency(target)}</span>
+                        <span>${isCompleted ? 'Goal Met! ⭐' : `${formatCurrency(remaining)} left`}</span>
+                    </div>
+                    <div class="progress-bar-container" style="height: 7px; margin: 4px 0;">
+                        <div class="progress-bar-fill" style="width: ${pct}%; background: ${isCompleted ? 'linear-gradient(90deg, var(--primary) 0%, var(--success-accent) 100%)' : 'var(--primary)'};"></div>
+                    </div>
+                    <div class="goal-actions">
+                        <button type="button" class="btn-mini-action" onclick="openAddSavingsModal('${g.id}')">
+                            + Add Savings
+                        </button>
+                        <div style="display: flex; gap: 5px;">
+                            <button type="button" class="btn-mini-action" onclick="openEditGoalModal('${g.id}')">✏️ Edit</button>
+                            <button type="button" class="btn-mini-action" style="color: var(--danger);" onclick="deleteGoal('${g.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                dom.goalsContainer.appendChild(card);
+            });
+        }
+
+        // Render Transaction History
+        function renderTransactions() {
+            const query = dom.searchTransactions.value.trim().toLowerCase();
+            const filterType = dom.filterType.value;
+            const filterCategory = dom.filterCategory.value;
+
+            const filtered = transactionState.filter(tx => {
+                const matchesSearch =
+                    tx.description.toLowerCase().includes(query) ||
+                    tx.category.toLowerCase().includes(query) ||
+                    (tx.note && tx.note.toLowerCase().includes(query));
+
+                const matchesType = filterType === "All" || tx.type === filterType;
+                const matchesCat = filterCategory === "All" || tx.category === filterCategory;
+
+                return matchesSearch && matchesType && matchesCat;
+            });
+
+            filtered.sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+
+            dom.transactionList.innerHTML = "";
+
+            if (filtered.length === 0) {
+                const empty = document.createElement("div");
+                empty.className = "empty-state";
+                empty.innerHTML = `
+                    <span class="empty-icon">🧾</span>
+                    <h3>${transactionState.length === 0 ? "No transactions logged yet" : "No matching transactions found"}</h3>
+                    <p>${transactionState.length === 0 ? "Log your first expense or pocket money above!" : "Try adjusting your search keyword or filters."}</p>
+                `;
+                dom.transactionList.appendChild(empty);
+            } else {
+                filtered.forEach(tx => {
+                    const isIncome = tx.type === "income";
+                    const catMeta = isIncome
+                        ? (INCOME_CATEGORIES[tx.category] || { icon: "💰", label: tx.category })
+                        : (EXPENSE_CATEGORIES[tx.category] || { icon: "📌", label: tx.category });
+
+                    const row = document.createElement("div");
+                    row.className = `transaction-item ${isIncome ? 'income-row' : 'expense-row'}`;
+
+                    row.innerHTML = `
+                        <div class="transaction-item-left">
+                            <div class="cat-badge-icon" title="${catMeta.label}">
+                                ${catMeta.icon}
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-title" title="${escapeHtml(tx.description)}">
+                                    ${escapeHtml(tx.description)}
+                                </div>
+                                <div class="transaction-meta">
+                                    <span class="pill-type ${isIncome ? 'type-income' : 'type-expense'}">
+                                        ${isIncome ? 'Income' : 'Expense'}
+                                    </span>
+                                    <span class="pill-category">${catMeta.label}</span>
+                                    <span class="transaction-date">📅 ${formatDateDisplay(tx.date)}</span>
+                                </div>
+                                ${tx.note ? `<div class="transaction-note">💬 ${escapeHtml(tx.note)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="transaction-item-right">
+                            <div class="transaction-amount ${isIncome ? 'amt-income' : 'amt-expense'}">
+                                ${isIncome ? '+' : '-'}${formatCurrency(tx.amount)}
+                            </div>
+                            <button type="button" class="row-action-btn btn-edit" title="Edit transaction" onclick="openEditTxModal('${tx.id}')">
+                                ✏️
+                            </button>
+                            <button type="button" class="row-action-btn btn-delete" title="Delete transaction" onclick="handleDeleteTx('${tx.id}')">
+                                🗑️
+                            </button>
+                        </div>
+                    `;
+                    dom.transactionList.appendChild(row);
+                });
+            }
+
+            const noun = filtered.length === 1 ? "transaction" : "transactions";
+            dom.shownCount.textContent = `Showing ${filtered.length} of ${transactionState.length} ${noun}`;
+        }
+
+        // --- TRANSACTION FORM EVENT HANDLERS ---
+
+        dom.tabExpenseBtn.addEventListener("click", () => {
+            dom.entryType.value = "expense";
+            dom.tabExpenseBtn.className = "segment-btn active segment-expense";
+            dom.tabIncomeBtn.className = "segment-btn segment-income";
+            dom.tabExpenseBtn.setAttribute("aria-selected", "true");
+            dom.tabIncomeBtn.setAttribute("aria-selected", "false");
+
+            dom.formPanelTitle.innerHTML = "<span>➖</span> Log Expense";
+            dom.lblDescription.textContent = "Expense Description / Name";
+            dom.entryDescription.placeholder = "e.g. Lunch, Xerox, Bus fare, Stationery";
+            dom.entrySubmitBtn.textContent = "- Log Expense (+5 XP)";
+            dom.entrySubmitBtn.className = "btn btn-primary";
+
+            populateCategoryDropdown(dom.entryCategory, "expense");
+        });
+
+        dom.tabIncomeBtn.addEventListener("click", () => {
+            dom.entryType.value = "income";
+            dom.tabIncomeBtn.className = "segment-btn active segment-income";
+            dom.tabExpenseBtn.className = "segment-btn segment-expense";
+            dom.tabIncomeBtn.setAttribute("aria-selected", "true");
+            dom.tabExpenseBtn.setAttribute("aria-selected", "false");
+
+            dom.formPanelTitle.innerHTML = "<span>➕</span> Record Money Received (Income)";
+            dom.lblDescription.textContent = "Income Source / Description";
+            dom.entryDescription.placeholder = "e.g. Pocket money, Friend repayment, Scholarship";
+            dom.entrySubmitBtn.textContent = "+ Add Money Received (+5 XP)";
+            dom.entrySubmitBtn.className = "btn btn-primary btn-income-submit";
+
+            populateCategoryDropdown(dom.entryCategory, "income");
+        });
+
+        dom.transactionForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const type = dom.entryType.value;
+            const description = dom.entryDescription.value.trim();
+            const amountVal = dom.entryAmount.value.trim();
+            const amount = parseFloat(amountVal);
+            const category = dom.entryCategory.value;
+            const date = dom.entryDate.value;
+            const note = dom.entryNote.value.trim();
+
+            if (!description) {
+                showMessage(dom.entryStatusMessage, "Please enter a description for the transaction.", "error");
+                dom.entryDescription.focus();
+                return;
+            }
+
+            if (!amountVal || isNaN(amount) || amount <= 0) {
+                showMessage(dom.entryStatusMessage, "Amount must be a valid positive number greater than ₹0.", "error");
+                dom.entryAmount.focus();
+                return;
+            }
+
+            const validCategories = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+            if (!validCategories[category]) {
+                showMessage(dom.entryStatusMessage, "Please select a valid category.", "error");
+                dom.entryCategory.focus();
+                return;
+            }
+
+            if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                showMessage(dom.entryStatusMessage, "Please select a valid date.", "error");
+                dom.entryDate.focus();
+                return;
+            }
+
+            const newTx = {
+                id: Date.now().toString() + "-" + Math.random().toString(36).substr(2, 6),
+                type,
+                description,
+                name: description,
+                category,
+                amount: Math.round(amount * 100) / 100,
+                date,
+                note
+            };
+
+            transactionState.push(newTx);
+            if (saveUserTransactions()) {
+                const label = type === "income" ? "Income of" : "Expense of";
+                showMessage(dom.entryStatusMessage, `Added ${label} ${formatCurrency(newTx.amount)} (${description})!`, "success");
+                dom.transactionForm.reset();
+                dom.entryDate.value = getTodayDateString();
+                dom.entryType.value = type;
+                populateCategoryDropdown(dom.entryCategory, type);
+
+                // Award XP safely once per unique transaction ID
+                if (!gameData.awardedTxIds.includes(newTx.id)) {
+                    gameData.awardedTxIds.push(newTx.id);
+                    addXp(5, "Transaction logged! 📝");
+                }
+
+                updateAllCalculationsAndUI();
+            }
+        });
+
+        window.handleDeleteTx = function (id) {
+            const tx = transactionState.find(t => t.id === id);
+            if (!tx) return;
+
+            const confirmed = window.confirm(
+                `Are you sure you want to delete "${tx.description}" (${formatCurrency(tx.amount)})?\nYour live balance will update immediately.`
+            );
+            if (!confirmed) return;
+
+            transactionState = transactionState.filter(t => t.id !== id);
+            if (saveUserTransactions()) {
+                updateAllCalculationsAndUI();
+            }
+        };
+
+        dom.clearAllBtn.addEventListener("click", () => {
+            if (transactionState.length === 0) {
+                alert("There are no transactions to clear.");
+                return;
+            }
+
+            const confirmed = window.confirm(
+                "Are you sure you want to delete ALL your recorded transactions?\nStarting balance will remain. This action cannot be undone."
+            );
+            if (!confirmed) return;
+
+            transactionState = [];
+            if (saveUserTransactions()) {
+                updateAllCalculationsAndUI();
+            }
+        });
+
+        dom.searchTransactions.addEventListener("input", renderTransactions);
+        dom.filterType.addEventListener("change", renderTransactions);
+        dom.filterCategory.addEventListener("change", renderTransactions);
+
+        // CSV Export
+        dom.exportCsvBtn.addEventListener("click", () => {
+            if (transactionState.length === 0) {
+                alert("No transactions available to export yet. Please log some expenses or income first.");
+                return;
+            }
+
+            const escapeCsv = (val) => {
+                const str = String(val == null ? "" : val);
+                return `"${str.replace(/"/g, '""')}"`;
+            };
+
+            const rows = [
+                ["Date", "Type", "Description", "Category", "Amount (INR)", "Note"]
+            ];
+
+            const sorted = [...transactionState].sort((a, b) => a.date.localeCompare(b.date));
+
+            sorted.forEach(tx => {
+                rows.push([
+                    tx.date,
+                    tx.type === "income" ? "Income" : "Expense",
+                    tx.description,
+                    tx.category,
+                    tx.amount.toFixed(2),
+                    tx.note || ""
+                ]);
+            });
+
+            const starting = userSettings.startingBalance || 0;
+            const totalInc = sorted.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
+            const totalExp = sorted.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+            const balance = starting + totalInc - totalExp;
+
+            rows.push([]);
+            rows.push(["--- ACCOUNT SUMMARY ---", "", "", "", "", ""]);
+            rows.push(["Starting Balance", "", "", "", starting.toFixed(2), ""]);
+            rows.push(["Total Income Received", "", "", "", totalInc.toFixed(2), ""]);
+            rows.push(["Total Expenses Spent", "", "", "", totalExp.toFixed(2), ""]);
+            rows.push(["Current Live Balance", "", "", "", balance.toFixed(2), ""]);
+
+            const csvContent = rows.map(r => r.map(escapeCsv).join(",")).join("\r\n");
+            const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const filename = `expense-report-${getTodayDateString()}.csv`;
+
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+
+        // Settings Modal
+        function openSettingsModal() {
+            dom.settingStartingBalance.value = userSettings.startingBalance || 0;
+            dom.settingDailyBudget.value = userSettings.dailyBudget || 0;
+            dom.settingsModal.style.display = "flex";
+            dom.settingStartingBalance.focus();
+        }
+
+        function closeSettingsModal() {
+            dom.settingsModal.style.display = "none";
+        }
+
+        dom.headerSettingsBtn.addEventListener("click", openSettingsModal);
+        dom.editStartingBalanceBtn.addEventListener("click", openSettingsModal);
+        dom.editDailyBudgetBtn.addEventListener("click", openSettingsModal);
+        dom.closeSettingsModalBtn.addEventListener("click", closeSettingsModal);
+        dom.cancelSettingsModalBtn.addEventListener("click", closeSettingsModal);
+
+        dom.settingsForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const startVal = parseFloat(dom.settingStartingBalance.value);
+            const budgetVal = parseFloat(dom.settingDailyBudget.value);
+
+            if (isNaN(startVal) || startVal < 0) {
+                alert("Please enter a valid starting balance (0 or greater).");
+                return;
+            }
+
+            if (isNaN(budgetVal) || budgetVal < 0) {
+                alert("Please enter a valid daily budget (0 to disable, or greater).");
+                return;
+            }
+
+            userSettings.startingBalance = Math.round(startVal * 100) / 100;
+            userSettings.dailyBudget = Math.round(budgetVal * 100) / 100;
+
+            if (saveUserSettings()) {
+                closeSettingsModal();
+                updateAllCalculationsAndUI();
+            }
+        });
+
+        // Edit Transaction Modal
+        window.openEditTxModal = function (id) {
+            const tx = transactionState.find(t => t.id === id);
+            if (!tx) return;
+
+            dom.editTxId.value = tx.id;
+            dom.editTxType.value = tx.type;
+            dom.editTxDescription.value = tx.description;
+            dom.editTxAmount.value = tx.amount;
+            dom.editTxDate.value = tx.date;
+            dom.editTxNote.value = tx.note || "";
+
+            populateCategoryDropdown(dom.editTxCategory, tx.type, tx.category);
+
+            dom.editModal.style.display = "flex";
+            dom.editTxDescription.focus();
+        };
+
+        dom.editTxType.addEventListener("change", () => {
+            populateCategoryDropdown(dom.editTxCategory, dom.editTxType.value);
+        });
+
+        function closeEditModal() {
+            dom.editModal.style.display = "none";
+        }
+
+        dom.closeEditModalBtn.addEventListener("click", closeEditModal);
+        dom.cancelEditModalBtn.addEventListener("click", closeEditModal);
+
+        dom.editTransactionForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const id = dom.editTxId.value;
+            const tx = transactionState.find(t => t.id === id);
+            if (!tx) return;
+
+            const type = dom.editTxType.value;
+            const description = dom.editTxDescription.value.trim();
+            const amountVal = dom.editTxAmount.value.trim();
+            const amount = parseFloat(amountVal);
+            const category = dom.editTxCategory.value;
+            const date = dom.editTxDate.value;
+            const note = dom.editTxNote.value.trim();
+
+            if (!description) {
+                alert("Please enter a description.");
+                return;
+            }
+
+            if (!amountVal || isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount greater than ₹0.");
+                return;
+            }
+
+            if (!date) {
+                alert("Please enter a valid date.");
+                return;
+            }
+
+            tx.type = type;
+            tx.description = description;
+            tx.name = description;
+            tx.amount = Math.round(amount * 100) / 100;
+            tx.category = category;
+            tx.date = date;
+            tx.note = note;
+
+            if (saveUserTransactions()) {
+                closeEditModal();
+                updateAllCalculationsAndUI();
+            }
+        });
+
+        // Savings Goals
+        function openGoalModal(id = null) {
+            dom.goalForm.reset();
+            if (id) {
+                const goal = savingsGoals.find(g => g.id === id);
+                if (!goal) return;
+                dom.goalModalTitle.textContent = "✏️ Edit Savings Goal";
+                dom.goalId.value = goal.id;
+                dom.goalName.value = goal.name;
+                dom.goalTarget.value = goal.target;
+                dom.goalSaved.value = goal.saved;
+            } else {
+                dom.goalModalTitle.textContent = "🎯 New Savings Goal";
+                dom.goalId.value = "";
+                dom.goalSaved.value = "0";
+            }
+            dom.goalModal.style.display = "flex";
+            dom.goalName.focus();
+        }
+
+        function closeGoalModal() {
+            dom.goalModal.style.display = "none";
+        }
+
+        dom.openNewGoalBtn.addEventListener("click", () => openGoalModal());
+        dom.closeGoalModalBtn.addEventListener("click", closeGoalModal);
+        dom.cancelGoalModalBtn.addEventListener("click", closeGoalModal);
+
+        window.openEditGoalModal = function (id) {
+            openGoalModal(id);
+        };
+
+        dom.goalForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const id = dom.goalId.value;
+            const name = dom.goalName.value.trim();
+            const target = parseFloat(dom.goalTarget.value);
+            const saved = parseFloat(dom.goalSaved.value) || 0;
+
+            if (!name) {
+                alert("Please enter a goal name.");
+                return;
+            }
+
+            if (isNaN(target) || target <= 0) {
+                alert("Please enter a valid target amount greater than ₹0.");
+                return;
+            }
+
+            if (id) {
+                const existing = savingsGoals.find(g => g.id === id);
+                if (existing) {
+                    existing.name = name;
+                    existing.target = Math.round(target * 100) / 100;
+                    existing.saved = Math.max(0, Math.round(saved * 100) / 100);
+                }
+            } else {
+                savingsGoals.push({
+                    id: "goal_" + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+                    name,
+                    target: Math.round(target * 100) / 100,
+                    saved: Math.max(0, Math.round(saved * 100) / 100),
+                    createdAt: getTodayDateString()
+                });
+            }
+
+            if (saveUserGoals()) {
+                closeGoalModal();
+                updateAllCalculationsAndUI();
+            }
+        });
+
+        window.deleteGoal = function (id) {
+            const g = savingsGoals.find(item => item.id === id);
+            if (!g) return;
+
+            if (!confirm(`Delete savings goal "${g.name}"?`)) return;
+
+            savingsGoals = savingsGoals.filter(item => item.id !== id);
+            if (saveUserGoals()) {
+                updateAllCalculationsAndUI();
+            }
+        };
+
+        window.openAddSavingsModal = function (id) {
+            const g = savingsGoals.find(item => item.id === id);
+            if (!g) return;
+
+            dom.addSavingsGoalId.value = g.id;
+            dom.addSavingsAmount.value = "";
+            dom.addSavingsPromptText.textContent = `Contributing to: "${g.name}" (Current: ${formatCurrency(g.saved)} / Target: ${formatCurrency(g.target)})`;
+            dom.addSavingsModal.style.display = "flex";
+            dom.addSavingsAmount.focus();
+        };
+
+        function closeAddSavingsModal() {
+            dom.addSavingsModal.style.display = "none";
+        }
+
+        dom.closeAddSavingsBtn.addEventListener("click", closeAddSavingsModal);
+        dom.cancelAddSavingsBtn.addEventListener("click", closeAddSavingsModal);
+
+        dom.addSavingsForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const id = dom.addSavingsGoalId.value;
+            const g = savingsGoals.find(item => item.id === id);
+            if (!g) return;
+
+            const addAmt = parseFloat(dom.addSavingsAmount.value);
+            if (isNaN(addAmt) || addAmt <= 0) {
+                alert("Please enter a valid amount greater than ₹0.");
+                return;
+            }
+
+            g.saved = Math.round((g.saved + addAmt) * 100) / 100;
+            if (saveUserGoals()) {
+                closeAddSavingsModal();
+                if (g.saved >= g.target) {
+                    triggerCelebration(`goal_met_${g.id}`, "Goal Achieved! ⭐", `Congratulations! You reached your savings goal: "${g.name}"!`, "🎉");
+                }
+                updateAllCalculationsAndUI();
+            }
+        });
+
+        // Close Modals
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeSettingsModal();
+                closeEditModal();
+                closeGoalModal();
+                closeAddSavingsModal();
+            }
+        });
+
+        [dom.settingsModal, dom.editModal, dom.goalModal, dom.addSavingsModal].forEach(modal => {
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) modal.style.display = "none";
+            });
+        });
+
+        // --- AUTHENTICATION FLOW ---
+
+        dom.switchToRegisterLink.addEventListener("click", () => {
+            dom.loginCard.style.display = "none";
+            dom.registerCard.style.display = "block";
+            dom.registerStatusMessage.textContent = "";
+            dom.registerStatusMessage.className = "status-message";
+            dom.registerName.focus();
+        });
+
+        dom.switchToLoginLink.addEventListener("click", () => {
+            dom.registerCard.style.display = "none";
+            dom.loginCard.style.display = "block";
+            dom.loginStatusMessage.textContent = "";
+            dom.loginStatusMessage.className = "status-message";
+            dom.loginIdentifier.focus();
+        });
+
+        dom.registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = dom.registerName.value.trim();
+            const email = dom.registerEmail.value.trim().toLowerCase();
+            const password = dom.registerPassword.value;
+            const confirmPassword = dom.registerConfirmPassword.value;
+
+            if (!name || name.length < 2) {
+                showMessage(dom.registerStatusMessage, "Please enter your full name (at least 2 letters).", "error");
+                dom.registerName.focus();
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showMessage(dom.registerStatusMessage, "Please enter a valid email address.", "error");
+                dom.registerEmail.focus();
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showMessage(dom.registerStatusMessage, "Password must be at least 6 characters long.", "error");
+                dom.registerPassword.focus();
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage(dom.registerStatusMessage, "Passwords do not match. Please verify.", "error");
+                dom.registerConfirmPassword.focus();
+                return;
+            }
+
+            const existingUsers = getStoredUsers();
+            if (existingUsers.some(u => u.email.toLowerCase() === email)) {
+                showMessage(dom.registerStatusMessage, "An account with this email already exists. Please log in.", "error");
+                return;
+            }
+
+            const passwordHash = await hashPassword(password);
+            const newUser = {
+                id: "usr_" + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                name,
+                email,
+                passwordHash,
+                createdAt: new Date().toISOString()
+            };
+
+            existingUsers.push(newUser);
+            if (!saveStoredUsers(existingUsers)) {
+                showMessage(dom.registerStatusMessage, "Could not save account. Local storage error.", "error");
+                return;
+            }
+
+            dom.registerForm.reset();
+            dom.registerCard.style.display = "none";
+            dom.loginCard.style.display = "block";
+            dom.loginIdentifier.value = email;
+            showMessage(dom.loginStatusMessage, "Registration successful! You can now log in.", "success", 5000);
+            dom.loginPassword.focus();
+        });
+
+        dom.loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const identifier = dom.loginIdentifier.value.trim().toLowerCase();
+            const password = dom.loginPassword.value;
+
+            if (!identifier) {
+                showMessage(dom.loginStatusMessage, "Please enter your email or username.", "error");
+                dom.loginIdentifier.focus();
+                return;
+            }
+
+            if (!password) {
+                showMessage(dom.loginStatusMessage, "Please enter your password.", "error");
+                dom.loginPassword.focus();
+                return;
+            }
+
+            const users = getStoredUsers();
+            const matchedUser = users.find(u =>
+                u.email.toLowerCase() === identifier ||
+                u.name.toLowerCase() === identifier
+            );
+
+            if (!matchedUser) {
+                showMessage(dom.loginStatusMessage, "No account found matching those credentials.", "error");
+                return;
+            }
+
+            const inputHash = await hashPassword(password);
+            if (matchedUser.passwordHash !== inputHash) {
+                showMessage(dom.loginStatusMessage, "Incorrect password. Please try again.", "error");
+                dom.loginPassword.focus();
+                return;
+            }
+
+            const sessionData = {
+                userId: matchedUser.id,
+                email: matchedUser.email,
+                name: matchedUser.name
+            };
+
+            try {
+                localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+            } catch (err) {}
+
+            activateUserSession(sessionData);
+        });
+
+        function activateUserSession(user) {
+            currentUser = user;
+
+            loadUserData(user.email);
+
+            dom.headerLevelBadge.style.display = "inline-flex";
+            dom.userProfileBadge.style.display = "flex";
+            dom.userAvatar.textContent = user.name ? user.name.charAt(0).toUpperCase() : "U";
+            dom.headerUserName.textContent = user.name;
+            dom.headerSettingsBtn.style.display = "inline-flex";
+            dom.logoutBtn.style.display = "inline-flex";
+
+            dom.authViewContainer.style.display = "none";
+            dom.dashboardView.style.display = "block";
+
+            dom.loginForm.reset();
+            dom.entryDate.value = getTodayDateString();
+            dom.entryType.value = "expense";
+            populateCategoryDropdown(dom.entryCategory, "expense");
+
+            updateAllCalculationsAndUI();
+        }
+
+        dom.logoutBtn.addEventListener("click", () => {
+            const confirmed = window.confirm("Are you sure you want to log out?");
+            if (!confirmed) return;
+
+            try {
+                localStorage.removeItem(SESSION_STORAGE_KEY);
+            } catch (err) {}
+
+            currentUser = null;
+            transactionState = [];
+            userSettings = { startingBalance: 0, dailyBudget: 0 };
+            savingsGoals = [];
+            gameData = { xp: 0, lastCheckInDate: null, awardedTxIds: [], completedChallenges: {}, unlockedBadges: {}, celebratedEvents: {} };
+
+            dom.headerLevelBadge.style.display = "none";
+            dom.userProfileBadge.style.display = "none";
+            dom.headerSettingsBtn.style.display = "none";
+            dom.logoutBtn.style.display = "none";
+
+            dom.dashboardView.style.display = "none";
+            dom.registerCard.style.display = "none";
+            dom.loginCard.style.display = "block";
+            dom.authViewContainer.style.display = "flex";
+
+            dom.loginStatusMessage.textContent = "";
+            dom.loginPassword.value = "";
+            showMessage(dom.loginStatusMessage, "You have been logged out successfully.", "success", 3000);
+        });
+
+        function checkExistingSession() {
+            try {
+                const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+                if (raw) {
+                    const session = JSON.parse(raw);
+                    if (session && session.email && session.name) {
+                        activateUserSession(session);
+                        return;
+                    }
+                }
+            } catch (err) {}
+
+            dom.headerLevelBadge.style.display = "none";
+            dom.userProfileBadge.style.display = "none";
+            dom.headerSettingsBtn.style.display = "none";
+            dom.logoutBtn.style.display = "none";
+            dom.dashboardView.style.display = "none";
+            dom.authViewContainer.style.display = "flex";
+            dom.loginCard.style.display = "block";
+            dom.registerCard.style.display = "none";
+        }
+
+        // Initialize App
+        checkExistingSession();
+    </script>
+</body>
+</html>
