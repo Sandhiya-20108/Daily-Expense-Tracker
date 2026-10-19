@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Daily Expense Tracker - Cute Gamified Money Buddy</title>
+    <!-- Mobile & PWA Configuration -->
+    <meta name="theme-color" content="#8B70B5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ExpenseFlow">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-apple.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <style>
         :root {
             /* Pastel Purple + Warm Cream Theme */
@@ -64,6 +73,12 @@
             padding: 0;
         }
 
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Quicksand", "Nunito", "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-body);
@@ -76,6 +91,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Header Navigation */
@@ -238,6 +255,7 @@
         main {
             max-width: 1260px;
             width: 100%;
+            box-sizing: border-box;
             margin: 0 auto;
             padding: 22px 20px 42px;
             flex: 1;
@@ -249,16 +267,19 @@
             align-items: center;
             justify-content: center;
             min-height: calc(80vh - 120px);
-            padding: 20px 0;
+            padding: 20px 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .auth-card {
             background: var(--card-bg);
             border: 1.5px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 38px 34px;
+            padding: 34px 28px;
             width: 100%;
             max-width: 440px;
+            box-sizing: border-box;
             box-shadow: var(--shadow-card);
         }
 
@@ -1696,11 +1717,15 @@
         footer {
             background: var(--card-bg);
             border-top: 1.5px solid var(--border-color);
-            padding: 16px 24px;
+            padding: 16px 20px;
             text-align: center;
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: auto;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         /* Animations */
@@ -1730,7 +1755,7 @@
             }
         }
 
-        /* Responsive Breakpoints */
+        /* Responsive Breakpoints & Mobile Optimization */
         @media (max-width: 1100px) {
             .gamification-hub-row {
                 grid-template-columns: 1fr;
@@ -1747,8 +1772,29 @@
         }
 
         @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+            }
+            main {
+                padding: 12px 10px 40px;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+            .header-container {
+                padding: 10px 14px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header-right {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
             .stats-grid-4 {
                 grid-template-columns: 1fr;
+            }
+            .recap-metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             .history-controls {
                 grid-template-columns: 1fr;
@@ -1756,15 +1802,204 @@
             .badges-grid-section {
                 grid-template-columns: 1fr;
             }
-            .header-container {
-                padding: 10px 14px;
-            }
-            main {
-                padding: 14px 12px;
+            .auth-view-container {
+                padding: 12px 0;
+                width: 100%;
             }
             .auth-card {
                 padding: 24px 18px;
+                max-width: 100%;
+                width: 100%;
             }
+            .modal-box {
+                width: calc(100% - 20px);
+                max-width: 440px;
+                padding: 20px 16px;
+                margin: 12px auto;
+            }
+            .btn {
+                min-height: 44px;
+            }
+            .password-toggle-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .header-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 10px 12px;
+            }
+            .brand {
+                justify-content: center;
+            }
+            .header-right {
+                justify-content: center;
+                gap: 6px;
+                width: 100%;
+            }
+            .header-level-badge, .user-profile-badge, .btn-settings-header, .btn-logout {
+                padding: 6px 10px;
+                font-size: 11.5px;
+            }
+            .money-buddy-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+                padding: 18px 14px;
+            }
+            .buddy-speech-tail {
+                display: none;
+            }
+            .buddy-card-top-row {
+                flex-direction: column;
+                gap: 6px;
+                align-items: center;
+            }
+            .buddy-action-row {
+                justify-content: center;
+            }
+            .budget-top, .recap-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .budget-numbers {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .recap-metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .recap-box.full-span {
+                grid-column: span 2;
+            }
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .transaction-item-right {
+                width: 100%;
+                justify-content: space-between;
+                border-top: 1px dashed var(--border-color);
+                padding-top: 6px;
+            }
+            .celebration-toast {
+                left: 12px !important;
+                right: 12px !important;
+                bottom: 12px !important;
+                max-width: calc(100% - 24px) !important;
+            }
+            .pwa-install-banner {
+                left: 12px !important;
+                right: 12px !important;
+                bottom: 12px !important;
+                max-width: calc(100% - 24px) !important;
+            }
+            .panel {
+                padding: 16px 14px;
+            }
+            .stat-card {
+                padding: 16px 14px;
+            }
+            footer {
+                padding: 16px 12px;
+                font-size: 11px;
+                line-height: 1.4;
+            }
+        }
+
+        /* PWA Install Banner */
+        .pwa-install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border: 2px solid var(--primary-accent);
+            border-radius: var(--radius-md);
+            box-shadow: 0 12px 36px rgba(85, 65, 111, 0.22);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            z-index: 1000;
+            max-width: 440px;
+            width: calc(100% - 24px);
+            animation: toastSlideUp 0.35s ease;
+        }
+
+        .pwa-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .pwa-banner-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .pwa-banner-text strong {
+            display: block;
+            font-size: 13px;
+            color: var(--heading-color);
+            font-weight: 800;
+        }
+
+        .pwa-banner-text span {
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pwa-banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-pwa-install {
+            background: var(--primary);
+            color: #FFFCF6;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-pwa-install:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-pwa-dismiss {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 7px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -4238,6 +4473,65 @@
 
         // Initialize App
         checkExistingSession();
+
+        // ----------------------------------------------------
+        // Progressive Web App (PWA) & Service Worker Support
+        // ----------------------------------------------------
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('ExpenseFlow PWA Service Worker Registered.'))
+                    .catch((err) => console.log('Service Worker Registration error:', err));
+            });
+        }
+
+        // PWA Install Prompt Listener (Android & Desktop Chrome)
+        let deferredPwaPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPwaPrompt = e;
+            showPwaInstallBanner();
+        });
+
+        function showPwaInstallBanner() {
+            let banner = document.getElementById('pwaInstallBanner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'pwaInstallBanner';
+                banner.className = 'pwa-install-banner';
+                banner.setAttribute('role', 'dialog');
+                banner.setAttribute('aria-label', 'Install App Banner');
+                banner.innerHTML = `
+                    <div class="pwa-banner-content">
+                        <span class="pwa-banner-icon">📲</span>
+                        <div class="pwa-banner-text">
+                            <strong>Add to Home Screen</strong>
+                            <span>Install ExpenseFlow for quick tracking!</span>
+                        </div>
+                    </div>
+                    <div class="pwa-banner-actions">
+                        <button type="button" class="btn-pwa-dismiss" id="pwaDismissBtn">Later</button>
+                        <button type="button" class="btn-pwa-install" id="pwaInstallBtn">Install 🐾</button>
+                    </div>
+                `;
+                document.body.appendChild(banner);
+
+                document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+                    if (deferredPwaPrompt) {
+                        deferredPwaPrompt.prompt();
+                        const { outcome } = await deferredPwaPrompt.userChoice;
+                        deferredPwaPrompt = null;
+                        banner.style.display = 'none';
+                    }
+                });
+
+                document.getElementById('pwaDismissBtn').addEventListener('click', () => {
+                    banner.style.display = 'none';
+                });
+            } else {
+                banner.style.display = 'flex';
+            }
+        }
     </script>
 </body>
 </html>

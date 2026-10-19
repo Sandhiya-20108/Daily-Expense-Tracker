@@ -9,6 +9,10 @@
 *.webp
 *.ps1
 
+# Allow PWA icons
+!icons/
+!icons/*.png
+
 # Operating System files
 .DS_Store
 Thumbs.db
