@@ -1310,6 +1310,28 @@
             background: rgba(85, 65, 111, 0.08);
         }
 
+        .settings-storage-tip {
+            margin-top: 14px;
+            margin-bottom: 6px;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, #FFF9F0 0%, #FBF6FD 100%);
+            border: 1.5px solid rgba(137, 110, 184, 0.22);
+            border-radius: var(--radius-sm);
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .settings-storage-tip strong {
+            color: var(--heading-color);
+            display: block;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+
         .status-message {
             margin-top: 10px;
             padding: 8px 12px;
@@ -2721,6 +2743,7 @@
                         <select id="filterPeriod" aria-label="Filter transactions by date period">
                             <option value="all">All Dates</option>
                             <option value="today">📅 Today</option>
+                            <option value="yesterday">📅 Yesterday</option>
                             <option value="this_week">📅 Last 7 Days</option>
                             <option value="this_month">📅 This Month</option>
                         </select>
@@ -2795,6 +2818,14 @@
                         <input type="number" id="settingDailyBudget" min="0" step="any" placeholder="e.g. 200">
                     </div>
                     <small class="stat-hint">Target maximum expenses for each day (0 to disable).</small>
+                </div>
+
+                <div class="settings-storage-tip">
+                    <div>
+                        <strong>🔒 Private Local Storage</strong>
+                        <span>Records stay on this device. Create backups anytime.</span>
+                    </div>
+                    <button type="button" class="btn btn-export" id="settingsBackupBtn" title="Export complete data backup as JSON">💾 Backup</button>
                 </div>
 
                 <div class="modal-actions">
@@ -3121,6 +3152,7 @@
             settingsForm: $("settingsForm"),
             settingStartingBalance: $("settingStartingBalance"),
             settingDailyBudget: $("settingDailyBudget"),
+            settingsBackupBtn: $("settingsBackupBtn"),
 
             editModal: $("editModal"),
             closeEditModalBtn: $("closeEditModalBtn"),
@@ -3443,6 +3475,18 @@
             });
         }
 
+        if (dom.appToast) {
+            dom.appToast.addEventListener("mouseenter", () => {
+                clearTimeout(appToastTimer);
+            });
+            dom.appToast.addEventListener("mouseleave", () => {
+                clearTimeout(appToastTimer);
+                appToastTimer = setTimeout(() => {
+                    if (dom.appToast) dom.appToast.style.display = "none";
+                }, 1800);
+            });
+        }
+
         function addXp(amount, reason = "") {
             const oldInfo = getLevelInfo(gameData.xp);
             gameData.xp += amount;
@@ -3525,7 +3569,7 @@
             if (challenge.id === "log_today") {
                 isSatisfied = transactionState.some(t => t.type === "expense" && t.date === todayStr);
                 if (!isSatisfied) {
-                    alert("Please record at least one expense dated today in the form below to complete this quest! 📝");
+                    showToast("Quest In Progress 📝", "Record at least one expense dated today in the form below to complete this quest!", "info", "📝");
                     return;
                 }
             } else if (challenge.id === "check_balance") {
@@ -3535,13 +3579,13 @@
                     isSatisfied = true;
                 } else {
                     openSettingsModal();
-                    alert("Please configure your daily spending budget to complete this quest! 🎯");
+                    showToast("Budget Required 🎯", "Please configure your daily spending budget to complete this quest!", "info", "🎯");
                     return;
                 }
             } else if (challenge.id === "top_category") {
                 isSatisfied = transactionState.some(t => t.type === "expense");
                 if (!isSatisfied) {
-                    alert("Log at least one expense to view your category spending breakdown! 📊");
+                    showToast("Category Breakdown 📊", "Log at least one expense to view your category spending breakdown!", "info", "📊");
                     return;
                 }
             } else if (challenge.id === "goal_progress") {
@@ -3549,7 +3593,7 @@
                     isSatisfied = true;
                 } else {
                     openGoalModal();
-                    alert("Create at least one savings goal target to complete this quest! ⭐");
+                    showToast("Savings Goal Needed ⭐", "Create at least one savings goal target to complete this quest!", "info", "⭐");
                     return;
                 }
             }
@@ -3971,8 +4015,10 @@
             const entries = Object.entries(catTotals).filter(([_, amt]) => amt > 0);
             if (entries.length === 0) {
                 dom.categoryBreakdownList.innerHTML = `
-                    <div style="text-align: center; padding: 18px 10px; color: var(--text-light); font-size: 12.5px;">
-                        No expense records yet to display breakdown.
+                    <div class="empty-state" style="padding: 20px 10px;">
+                        <span class="empty-icon" style="font-size: 28px;">📊</span>
+                        <h3 style="font-size: 13.5px;">No Expense Breakdown Yet</h3>
+                        <p style="font-size: 12px;">Log your first expense to see your category spending visualized!</p>
                     </div>
                 `;
                 return;
@@ -4086,6 +4132,11 @@
                 let matchesPeriod = true;
                 if (filterPeriod === "today") {
                     matchesPeriod = tx.date === todayStr;
+                } else if (filterPeriod === "yesterday") {
+                    const yDate = new Date();
+                    yDate.setDate(yDate.getDate() - 1);
+                    const yStr = `${yDate.getFullYear()}-${String(yDate.getMonth() + 1).padStart(2, "0")}-${String(yDate.getDate()).padStart(2, "0")}`;
+                    matchesPeriod = tx.date === yStr;
                 } else if (filterPeriod === "this_week") {
                     if (tx.date) {
                         const txTime = new Date(tx.date + "T00:00:00").getTime();
@@ -4446,6 +4497,13 @@
 
         if (dom.backupNowBtn) {
             dom.backupNowBtn.addEventListener("click", exportJsonBackup);
+        }
+
+        if (dom.settingsBackupBtn) {
+            dom.settingsBackupBtn.addEventListener("click", () => {
+                closeSettingsModal();
+                exportJsonBackup();
+            });
         }
 
         if (dom.dismissBackupReminderBtn) {
@@ -4825,11 +4883,10 @@
             }
         });
 
-        [dom.settingsModal, dom.editModal, dom.goalModal, dom.addSavingsModal].forEach(modal => {
-            modal.addEventListener("click", (e) => {
-                if (e.target === modal) modal.style.display = "none";
-            });
-        });
+        if (dom.settingsModal) dom.settingsModal.addEventListener("click", (e) => { if (e.target === dom.settingsModal) closeSettingsModal(); });
+        if (dom.editModal) dom.editModal.addEventListener("click", (e) => { if (e.target === dom.editModal) closeEditModal(); });
+        if (dom.goalModal) dom.goalModal.addEventListener("click", (e) => { if (e.target === dom.goalModal) closeGoalModal(); });
+        if (dom.addSavingsModal) dom.addSavingsModal.addEventListener("click", (e) => { if (e.target === dom.addSavingsModal) closeAddSavingsModal(); });
 
         // --- AUTHENTICATION FLOW ---
 
