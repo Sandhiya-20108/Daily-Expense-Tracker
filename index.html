@@ -1210,12 +1210,104 @@
             font-size: 12px;
             padding: 5px 11px;
             border-radius: 7px;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         .btn-export:hover {
             background: var(--card-lavender);
             border-color: var(--primary);
             color: var(--primary);
+        }
+
+        .history-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Gentle LocalStorage Backup Reminder Banner */
+        .backup-reminder {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: linear-gradient(135deg, #FFF9F0 0%, #FBF6FD 100%);
+            border: 1.5px solid rgba(137, 110, 184, 0.25);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px;
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .backup-reminder-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .backup-reminder-icon {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .backup-reminder-text {
+            font-size: 12px;
+            line-height: 1.35;
+            color: var(--text-main);
+        }
+
+        .backup-reminder-text strong {
+            color: var(--heading-color);
+            font-weight: 700;
+            display: inline;
+            margin-right: 4px;
+        }
+
+        .backup-reminder-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-reminder-action {
+            background: var(--primary);
+            color: #FFFCF6;
+            border: none;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-reminder-action:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-reminder-dismiss {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .btn-reminder-dismiss:hover {
+            color: var(--text-main);
+            background: rgba(85, 65, 111, 0.08);
         }
 
         .status-message {
@@ -1402,8 +1494,8 @@
         /* History Panel */
         .history-controls {
             display: grid;
-            grid-template-columns: 1fr 130px 130px;
-            gap: 10px;
+            grid-template-columns: minmax(130px, 1.4fr) repeat(3, minmax(105px, 1fr));
+            gap: 8px;
             margin-bottom: 14px;
         }
 
@@ -1592,6 +1684,32 @@
         .empty-state p {
             font-size: 12.5px;
             color: var(--text-secondary);
+            max-width: 320px;
+            margin: 4px auto 0;
+            line-height: 1.4;
+        }
+
+        .empty-state-btn {
+            margin-top: 14px;
+            font-size: 12px;
+            padding: 7px 15px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .empty-state-btn:hover {
+            background: var(--primary);
+            color: #FFFCF6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--primary-glow);
         }
 
         .history-footer {
@@ -1713,6 +1831,83 @@
             align-self: flex-start;
         }
 
+        /* Subtle, Attractive Success / Action Toast */
+        .app-toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 26px rgba(85, 65, 111, 0.18);
+            z-index: 2200;
+            max-width: 380px;
+            animation: toastSlideDown 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .app-toast.toast-success {
+            border-color: var(--success-accent);
+            background: linear-gradient(135deg, #FFFCF6 0%, #F5FBF7 100%);
+        }
+
+        .app-toast.toast-info {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #FFFCF6 0%, #F9F6FD 100%);
+        }
+
+        .app-toast.toast-error {
+            border-color: rgba(199, 86, 86, 0.45);
+            background: linear-gradient(135deg, #FFFCF6 0%, #FFF5F5 100%);
+        }
+
+        .app-toast-icon {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .app-toast-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .app-toast-title {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--heading-color);
+            line-height: 1.3;
+        }
+
+        .app-toast-message {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.35;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+
+        .app-toast-close {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .app-toast-close:hover {
+            color: var(--text-main);
+            background: var(--border-color);
+        }
+
         /* Footer */
         footer {
             background: var(--card-bg);
@@ -1744,13 +1939,18 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes toastSlideDown {
+            from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0.85; transform: translateY(-4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .css-bear-wrap, .celebration-icon, .celebration-toast {
+            .css-bear-wrap, .celebration-icon, .celebration-toast, .app-toast {
                 animation: none !important;
             }
         }
@@ -1899,6 +2099,21 @@
                 right: 12px !important;
                 bottom: 12px !important;
                 max-width: calc(100% - 24px) !important;
+            }
+            .app-toast {
+                left: 12px !important;
+                right: 12px !important;
+                top: 12px !important;
+                max-width: calc(100% - 24px) !important;
+            }
+            .backup-reminder {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .backup-reminder-actions {
+                width: 100%;
+                justify-content: space-between;
             }
             .pwa-install-banner {
                 left: 12px !important;
@@ -2466,18 +2681,48 @@
                         <h3 class="panel-title">
                             <span>📋</span> Transaction History
                         </h3>
-                        <button type="button" class="btn btn-export" id="exportCsvBtn" title="Export transactions to a spreadsheet CSV file">
-                            📥 Export CSV
-                        </button>
+                        <div class="history-actions">
+                            <button type="button" class="btn btn-export" id="exportCsvBtn" title="Export transactions to a spreadsheet CSV file">
+                                📥 Export CSV
+                            </button>
+                            <button type="button" class="btn btn-export" id="backupJsonBtn" title="Export complete data backup as JSON">
+                                💾 Backup
+                            </button>
+                            <button type="button" class="btn btn-export" id="importJsonBtn" title="Import transactions from JSON backup">
+                                📂 Import
+                            </button>
+                            <input type="file" id="importFileInput" accept=".json" style="display: none;" aria-label="Import transactions JSON file">
+                        </div>
+                    </div>
+
+                    <!-- Gentle LocalStorage Backup Reminder -->
+                    <div class="backup-reminder" id="backupReminderBanner" style="display: none;" role="note">
+                        <div class="backup-reminder-content">
+                            <span class="backup-reminder-icon">🐻</span>
+                            <div class="backup-reminder-text">
+                                <strong>Barnaby's Safe Storage Tip:</strong>
+                                <span>Your records are saved locally in this browser. Create a quick backup to keep them safe!</span>
+                            </div>
+                        </div>
+                        <div class="backup-reminder-actions">
+                            <button type="button" class="btn-reminder-action" id="backupNowBtn">💾 Backup Now</button>
+                            <button type="button" class="btn-reminder-dismiss" id="dismissBackupReminderBtn" aria-label="Dismiss backup tip">&times;</button>
+                        </div>
                     </div>
 
                     <!-- Search and Multi-Filter Controls -->
                     <div class="history-controls">
-                        <input type="search" id="searchTransactions" placeholder="🔍 Search by name, category, note..." aria-label="Search transactions">
+                        <input type="search" id="searchTransactions" placeholder="🔍 Search by name, category, note, date..." aria-label="Search transactions">
                         <select id="filterType" aria-label="Filter transactions by type">
                             <option value="All">All Types</option>
                             <option value="expense">➖ Expenses Only</option>
                             <option value="income">➕ Income Only</option>
+                        </select>
+                        <select id="filterPeriod" aria-label="Filter transactions by date period">
+                            <option value="all">All Dates</option>
+                            <option value="today">📅 Today</option>
+                            <option value="this_week">📅 Last 7 Days</option>
+                            <option value="this_month">📅 This Month</option>
                         </select>
                         <select id="filterCategory" aria-label="Filter transactions by category">
                             <option value="All">All Categories</option>
@@ -2512,6 +2757,16 @@
             <p id="celebrationMessage">You reached a new level!</p>
         </div>
         <button type="button" class="celebration-close" id="celebrationCloseBtn" aria-label="Close celebration">&times;</button>
+    </div>
+
+    <!-- ACTION SUCCESS NOTIFICATION TOAST -->
+    <div class="app-toast" id="appToast" role="status" aria-live="polite">
+        <span class="app-toast-icon" id="appToastIcon">✨</span>
+        <div class="app-toast-content">
+            <strong class="app-toast-title" id="appToastTitle">Success</strong>
+            <p class="app-toast-message" id="appToastMessage">Action completed successfully.</p>
+        </div>
+        <button type="button" class="app-toast-close" id="appToastCloseBtn" aria-label="Close notification">&times;</button>
     </div>
 
     <!-- MODALS -->
@@ -2834,8 +3089,15 @@
             badgesUnlockedCounter: $("badgesUnlockedCounter"),
 
             exportCsvBtn: $("exportCsvBtn"),
+            backupJsonBtn: $("backupJsonBtn"),
+            importJsonBtn: $("importJsonBtn"),
+            importFileInput: $("importFileInput"),
+            backupReminderBanner: $("backupReminderBanner"),
+            backupNowBtn: $("backupNowBtn"),
+            dismissBackupReminderBtn: $("dismissBackupReminderBtn"),
             searchTransactions: $("searchTransactions"),
             filterType: $("filterType"),
+            filterPeriod: $("filterPeriod"),
             filterCategory: $("filterCategory"),
             transactionList: $("transactionList"),
             shownCount: $("shownCount"),
@@ -2846,6 +3108,12 @@
             celebrationTitle: $("celebrationTitle"),
             celebrationMessage: $("celebrationMessage"),
             celebrationCloseBtn: $("celebrationCloseBtn"),
+
+            appToast: $("appToast"),
+            appToastIcon: $("appToastIcon"),
+            appToastTitle: $("appToastTitle"),
+            appToastMessage: $("appToastMessage"),
+            appToastCloseBtn: $("appToastCloseBtn"),
 
             settingsModal: $("settingsModal"),
             closeSettingsModalBtn: $("closeSettingsModalBtn"),
@@ -3148,6 +3416,32 @@
         dom.celebrationCloseBtn.addEventListener("click", () => {
             dom.celebrationToast.style.display = "none";
         });
+
+        // Subtle, Non-Intrusive Action Toast Notification (Auto-debounced, single-instance)
+        let appToastTimer = null;
+        function showToast(title, message, type = "success", icon = "✨", duration = 3200) {
+            if (!dom.appToast) return;
+
+            dom.appToastTitle.textContent = title;
+            dom.appToastMessage.textContent = message;
+            dom.appToastIcon.textContent = icon;
+
+            dom.appToast.className = `app-toast toast-${type}`;
+            dom.appToast.style.display = "flex";
+
+            clearTimeout(appToastTimer);
+            appToastTimer = setTimeout(() => {
+                if (dom.appToast) {
+                    dom.appToast.style.display = "none";
+                }
+            }, duration);
+        }
+
+        if (dom.appToastCloseBtn) {
+            dom.appToastCloseBtn.addEventListener("click", () => {
+                if (dom.appToast) dom.appToast.style.display = "none";
+            });
+        }
 
         function addXp(amount, reason = "") {
             const oldInfo = getLevelInfo(gameData.xp);
@@ -3625,6 +3919,24 @@
 
             // 11. Dropdowns
             populateFilterCategoryDropdown();
+
+            // 12. Gentle LocalStorage Backup Reminder Check
+            checkBackupReminder();
+        }
+
+        // Gentle LocalStorage Backup Reminder Check
+        function checkBackupReminder() {
+            if (!currentUser || !dom.backupReminderBanner) return;
+            const clean = sanitizeId(currentUser.email);
+            const dismissedKey = "daily_expense_backup_reminded_" + clean;
+            const isDismissed = localStorage.getItem(dismissedKey) === "true";
+
+            // Show gentle reminder when user has at least 3 transactions and hasn't dismissed it
+            if (!isDismissed && transactionState.length >= 3) {
+                dom.backupReminderBanner.style.display = "flex";
+            } else {
+                dom.backupReminderBanner.style.display = "none";
+            }
         }
 
         // Render My Badges Grid
@@ -3696,8 +4008,13 @@
 
             if (savingsGoals.length === 0) {
                 dom.goalsContainer.innerHTML = `
-                    <div style="text-align: center; padding: 18px 10px; color: var(--text-light); font-size: 12.5px;">
-                        No savings targets yet. Click "+ New Goal" to set one!
+                    <div class="empty-state" style="padding: 22px 12px;">
+                        <span class="empty-icon" style="font-size: 32px;">🎯</span>
+                        <h3 style="font-size: 14px;">No Savings Goals Yet</h3>
+                        <p style="font-size: 12px; margin-bottom: 12px;">Barnaby loves big dreams! Set a savings goal — like a new desk, emergency fund, or treat.</p>
+                        <button type="button" class="empty-state-btn" onclick="openGoalModal()">
+                            🎯 Create Your First Goal
+                        </button>
                     </div>
                 `;
                 return;
@@ -3745,17 +4062,44 @@
             const query = dom.searchTransactions.value.trim().toLowerCase();
             const filterType = dom.filterType.value;
             const filterCategory = dom.filterCategory.value;
+            const filterPeriod = dom.filterPeriod ? dom.filterPeriod.value : "all";
+            const todayStr = getTodayDateString();
 
             const filtered = transactionState.filter(tx => {
+                const descStr = (tx.description || "").toLowerCase();
+                const catStr = (tx.category || "").toLowerCase();
+                const noteStr = (tx.note || "").toLowerCase();
+                const dateStr = (tx.date || "").toLowerCase();
+                const formattedDateStr = formatDateDisplay(tx.date).toLowerCase();
+
                 const matchesSearch =
-                    tx.description.toLowerCase().includes(query) ||
-                    tx.category.toLowerCase().includes(query) ||
-                    (tx.note && tx.note.toLowerCase().includes(query));
+                    !query ||
+                    descStr.includes(query) ||
+                    catStr.includes(query) ||
+                    noteStr.includes(query) ||
+                    dateStr.includes(query) ||
+                    formattedDateStr.includes(query);
 
                 const matchesType = filterType === "All" || tx.type === filterType;
                 const matchesCat = filterCategory === "All" || tx.category === filterCategory;
 
-                return matchesSearch && matchesType && matchesCat;
+                let matchesPeriod = true;
+                if (filterPeriod === "today") {
+                    matchesPeriod = tx.date === todayStr;
+                } else if (filterPeriod === "this_week") {
+                    if (tx.date) {
+                        const txTime = new Date(tx.date + "T00:00:00").getTime();
+                        const nowTime = new Date(todayStr + "T00:00:00").getTime();
+                        const diffDays = (nowTime - txTime) / (1000 * 60 * 60 * 24);
+                        matchesPeriod = diffDays >= 0 && diffDays <= 7;
+                    } else {
+                        matchesPeriod = false;
+                    }
+                } else if (filterPeriod === "this_month") {
+                    matchesPeriod = tx.date && tx.date.slice(0, 7) === todayStr.slice(0, 7);
+                }
+
+                return matchesSearch && matchesType && matchesCat && matchesPeriod;
             });
 
             filtered.sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
@@ -3765,12 +4109,47 @@
             if (filtered.length === 0) {
                 const empty = document.createElement("div");
                 empty.className = "empty-state";
-                empty.innerHTML = `
-                    <span class="empty-icon">🧾</span>
-                    <h3>${transactionState.length === 0 ? "No transactions logged yet" : "No matching transactions found"}</h3>
-                    <p>${transactionState.length === 0 ? "Log your first expense or pocket money above!" : "Try adjusting your search keyword or filters."}</p>
-                `;
+                if (transactionState.length === 0) {
+                    empty.innerHTML = `
+                        <span class="empty-icon">🐻</span>
+                        <h3>Barnaby is ready when you are!</h3>
+                        <p>Log your first expense or pocket money above to start tracking and earn XP!</p>
+                        <button type="button" class="empty-state-btn" id="emptyLogFirstBtn">
+                            ➕ Log Your First Transaction
+                        </button>
+                    `;
+                } else {
+                    empty.innerHTML = `
+                        <span class="empty-icon">🔍</span>
+                        <h3>No matching transactions found</h3>
+                        <p>Barnaby couldn't find any records matching your search or active filters.</p>
+                        <button type="button" class="empty-state-btn" id="resetFiltersBtn">
+                            🔄 Reset All Filters
+                        </button>
+                    `;
+                }
                 dom.transactionList.appendChild(empty);
+
+                const emptyLogBtn = document.getElementById("emptyLogFirstBtn");
+                if (emptyLogBtn) {
+                    emptyLogBtn.addEventListener("click", () => {
+                        if (dom.entryDescription) {
+                            dom.entryDescription.focus();
+                            dom.entryDescription.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }
+                    });
+                }
+
+                const resetBtn = document.getElementById("resetFiltersBtn");
+                if (resetBtn) {
+                    resetBtn.addEventListener("click", () => {
+                        dom.searchTransactions.value = "";
+                        dom.filterType.value = "All";
+                        dom.filterCategory.value = "All";
+                        if (dom.filterPeriod) dom.filterPeriod.value = "all";
+                        renderTransactions();
+                    });
+                }
             } else {
                 filtered.forEach(tx => {
                     const isIncome = tx.type === "income";
@@ -3905,6 +4284,12 @@
             if (saveUserTransactions()) {
                 const label = type === "income" ? "Income of" : "Expense of";
                 showMessage(dom.entryStatusMessage, `Added ${label} ${formatCurrency(newTx.amount)} (${description})!`, "success");
+                showToast(
+                    `${type === "income" ? "Income" : "Expense"} Logged!`,
+                    `${formatCurrency(newTx.amount)} • ${description}`,
+                    "success",
+                    type === "income" ? "💵" : "💸"
+                );
                 dom.transactionForm.reset();
                 dom.entryDate.value = getTodayDateString();
                 dom.entryType.value = type;
@@ -3929,15 +4314,17 @@
             );
             if (!confirmed) return;
 
+            const deletedDesc = tx.description;
             transactionState = transactionState.filter(t => t.id !== id);
             if (saveUserTransactions()) {
                 updateAllCalculationsAndUI();
+                showToast("Transaction Deleted", `Removed "${deletedDesc}" from your history.`, "info", "🗑️");
             }
         };
 
         dom.clearAllBtn.addEventListener("click", () => {
             if (transactionState.length === 0) {
-                alert("There are no transactions to clear.");
+                showToast("No Transactions", "There are no transactions to clear.", "info", "ℹ️");
                 return;
             }
 
@@ -3946,20 +4333,25 @@
             );
             if (!confirmed) return;
 
+            const count = transactionState.length;
             transactionState = [];
             if (saveUserTransactions()) {
                 updateAllCalculationsAndUI();
+                showToast("History Cleared", `Deleted ${count} recorded transactions.`, "info", "🗑️");
             }
         });
 
         dom.searchTransactions.addEventListener("input", renderTransactions);
         dom.filterType.addEventListener("change", renderTransactions);
         dom.filterCategory.addEventListener("change", renderTransactions);
+        if (dom.filterPeriod) {
+            dom.filterPeriod.addEventListener("change", renderTransactions);
+        }
 
         // CSV Export
         dom.exportCsvBtn.addEventListener("click", () => {
             if (transactionState.length === 0) {
-                alert("No transactions available to export yet. Please log some expenses or income first.");
+                showToast("Export Notice", "No transactions available to export yet. Please log some expenses or income first.", "info", "ℹ️");
                 return;
             }
 
@@ -4009,7 +4401,171 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+            showToast("CSV Exported", `Downloaded ${filename} for spreadsheet viewing.`, "success", "📥");
         });
+
+        // JSON Backup Export
+        function exportJsonBackup() {
+            if (!currentUser) return;
+            const backupData = {
+                version: 2,
+                app: "ExpenseFlow",
+                user: currentUser.email,
+                userName: currentUser.name || "ExpenseFlow User",
+                exportedAt: new Date().toISOString(),
+                settings: userSettings,
+                goals: savingsGoals,
+                transactions: transactionState
+            };
+
+            const jsonStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const filename = `expenseflow-backup-${getTodayDateString()}.json`;
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            // Mark reminded as dismissed so banner doesn't nag
+            const clean = sanitizeId(currentUser.email);
+            try {
+                localStorage.setItem("daily_expense_backup_reminded_" + clean, "true");
+            } catch (e) {}
+            if (dom.backupReminderBanner) dom.backupReminderBanner.style.display = "none";
+
+            showToast("Backup Created! 💾", `Exported ${transactionState.length} transactions safely to JSON.`, "success", "💾");
+        }
+
+        if (dom.backupJsonBtn) {
+            dom.backupJsonBtn.addEventListener("click", exportJsonBackup);
+        }
+
+        if (dom.backupNowBtn) {
+            dom.backupNowBtn.addEventListener("click", exportJsonBackup);
+        }
+
+        if (dom.dismissBackupReminderBtn) {
+            dom.dismissBackupReminderBtn.addEventListener("click", () => {
+                if (currentUser) {
+                    const clean = sanitizeId(currentUser.email);
+                    try {
+                        localStorage.setItem("daily_expense_backup_reminded_" + clean, "true");
+                    } catch (e) {}
+                }
+                if (dom.backupReminderBanner) dom.backupReminderBanner.style.display = "none";
+                showToast("Reminder Dismissed", "You can export backups anytime from the History header.", "info", "👍");
+            });
+        }
+
+        // JSON Backup Import
+        if (dom.importJsonBtn && dom.importFileInput) {
+            dom.importJsonBtn.addEventListener("click", () => {
+                dom.importFileInput.click();
+            });
+
+            dom.importFileInput.addEventListener("change", (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        let candidateTxs = [];
+
+                        if (Array.isArray(parsed)) {
+                            candidateTxs = parsed;
+                        } else if (parsed && Array.isArray(parsed.transactions)) {
+                            candidateTxs = parsed.transactions;
+
+                            // Restore settings if empty
+                            if (parsed.settings && (!userSettings.startingBalance && !userSettings.dailyBudget)) {
+                                if (Number.isFinite(parsed.settings.startingBalance)) {
+                                    userSettings.startingBalance = Math.max(0, parsed.settings.startingBalance);
+                                }
+                                if (Number.isFinite(parsed.settings.dailyBudget)) {
+                                    userSettings.dailyBudget = Math.max(0, parsed.settings.dailyBudget);
+                                }
+                                saveUserSettings();
+                            }
+
+                            // Restore goals if empty
+                            if (Array.isArray(parsed.goals) && savingsGoals.length === 0 && parsed.goals.length > 0) {
+                                savingsGoals = parsed.goals.map(g => ({
+                                    id: g.id || "goal_" + Date.now().toString(36),
+                                    name: g.name || "Goal",
+                                    target: Number(g.target) || 1000,
+                                    saved: Number(g.saved) || 0,
+                                    createdAt: g.createdAt || getTodayDateString()
+                                }));
+                                saveUserGoals();
+                            }
+                        } else {
+                            showToast("Import Failed", "Unrecognized file format. Please choose an ExpenseFlow JSON backup file.", "error", "⚠️");
+                            return;
+                        }
+
+                        const validTxs = [];
+                        for (const item of candidateTxs) {
+                            if (!item || typeof item !== "object") continue;
+                            const amount = parseFloat(item.amount);
+                            if (isNaN(amount) || amount <= 0) continue;
+                            const desc = String(item.description || item.name || "Imported Record").trim();
+                            const type = item.type === "income" ? "income" : "expense";
+                            const date = item.date && /^\d{4}-\d{2}-\d{2}$/.test(item.date) ? item.date : getTodayDateString();
+                            const category = item.category || (type === "income" ? "Pocket Money" : "Other");
+
+                            validTxs.push({
+                                id: String(item.id || Date.now().toString() + "-" + Math.random().toString(36).substr(2, 6)),
+                                type,
+                                description: desc,
+                                name: desc,
+                                category,
+                                amount: Math.round(amount * 100) / 100,
+                                date,
+                                note: item.note ? String(item.note) : ""
+                            });
+                        }
+
+                        if (validTxs.length === 0) {
+                            showToast("Import Notice", "No valid transactions found in selected file.", "info", "ℹ️");
+                            return;
+                        }
+
+                        const confirmed = window.confirm(
+                            `Import ${validTxs.length} transactions from "${file.name}"?\n\nThey will be safely merged with your current records without deleting existing items.`
+                        );
+                        if (!confirmed) {
+                            dom.importFileInput.value = "";
+                            return;
+                        }
+
+                        const existingIds = new Set(transactionState.map(t => t.id));
+                        let addedCount = 0;
+                        for (const tx of validTxs) {
+                            if (!existingIds.has(tx.id)) {
+                                transactionState.push(tx);
+                                existingIds.add(tx.id);
+                                addedCount++;
+                            }
+                        }
+
+                        saveUserTransactions();
+                        updateAllCalculationsAndUI();
+                        showToast("Import Successful! 📂", `Added ${addedCount} new transaction${addedCount === 1 ? '' : 's'}.`, "success", "📥");
+                    } catch (err) {
+                        showToast("Import Error", "Failed to parse JSON file. Please ensure it is a valid backup file.", "error", "⚠️");
+                    } finally {
+                        dom.importFileInput.value = "";
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
 
         // Settings Modal
         function openSettingsModal() {
@@ -4036,12 +4592,12 @@
             const budgetVal = parseFloat(dom.settingDailyBudget.value);
 
             if (isNaN(startVal) || startVal < 0) {
-                alert("Please enter a valid starting balance (0 or greater).");
+                showToast("Invalid Balance", "Please enter a valid starting balance (0 or greater).", "error", "⚠️");
                 return;
             }
 
             if (isNaN(budgetVal) || budgetVal < 0) {
-                alert("Please enter a valid daily budget (0 to disable, or greater).");
+                showToast("Invalid Budget", "Please enter a valid daily budget (0 to disable, or greater).", "error", "⚠️");
                 return;
             }
 
@@ -4051,6 +4607,7 @@
             if (saveUserSettings()) {
                 closeSettingsModal();
                 updateAllCalculationsAndUI();
+                showToast("Settings Saved", "Your budget and starting balance preferences have been updated.", "success", "⚙️");
             }
         });
 
@@ -4099,17 +4656,17 @@
             const note = dom.editTxNote.value.trim();
 
             if (!description) {
-                alert("Please enter a description.");
+                showToast("Description Required", "Please enter a description for the transaction.", "error", "⚠️");
                 return;
             }
 
             if (!amountVal || isNaN(amount) || amount <= 0) {
-                alert("Please enter a valid amount greater than ₹0.");
+                showToast("Invalid Amount", "Please enter a valid amount greater than ₹0.", "error", "⚠️");
                 return;
             }
 
             if (!date) {
-                alert("Please enter a valid date.");
+                showToast("Date Required", "Please select a valid date.", "error", "⚠️");
                 return;
             }
 
@@ -4124,6 +4681,7 @@
             if (saveUserTransactions()) {
                 closeEditModal();
                 updateAllCalculationsAndUI();
+                showToast("Transaction Updated", `${description} (${formatCurrency(tx.amount)})`, "success", "✏️");
             }
         });
 
@@ -4168,12 +4726,12 @@
             const saved = parseFloat(dom.goalSaved.value) || 0;
 
             if (!name) {
-                alert("Please enter a goal name.");
+                showToast("Goal Name Required", "Please enter a name for your savings goal.", "error", "⚠️");
                 return;
             }
 
             if (isNaN(target) || target <= 0) {
-                alert("Please enter a valid target amount greater than ₹0.");
+                showToast("Target Amount Required", "Please enter a valid target amount greater than ₹0.", "error", "⚠️");
                 return;
             }
 
@@ -4197,6 +4755,7 @@
             if (saveUserGoals()) {
                 closeGoalModal();
                 updateAllCalculationsAndUI();
+                showToast(id ? "Goal Updated" : "Savings Goal Created!", `"${name}" target: ${formatCurrency(target)}`, "success", "🎯");
             }
         });
 
@@ -4204,11 +4763,13 @@
             const g = savingsGoals.find(item => item.id === id);
             if (!g) return;
 
-            if (!confirm(`Delete savings goal "${g.name}"?`)) return;
+            if (!confirm(`Are you sure you want to delete savings goal "${g.name}"?\nSaved progress (${formatCurrency(g.saved)} of ${formatCurrency(g.target)}) will be removed. This cannot be undone.`)) return;
 
+            const goalName = g.name;
             savingsGoals = savingsGoals.filter(item => item.id !== id);
             if (saveUserGoals()) {
                 updateAllCalculationsAndUI();
+                showToast("Goal Removed", `Deleted "${goalName}".`, "info", "🗑️");
             }
         };
 
@@ -4238,7 +4799,7 @@
 
             const addAmt = parseFloat(dom.addSavingsAmount.value);
             if (isNaN(addAmt) || addAmt <= 0) {
-                alert("Please enter a valid amount greater than ₹0.");
+                showToast("Invalid Amount", "Please enter a valid amount greater than ₹0.", "error", "⚠️");
                 return;
             }
 
@@ -4247,6 +4808,8 @@
                 closeAddSavingsModal();
                 if (g.saved >= g.target) {
                     triggerCelebration(`goal_met_${g.id}`, "Goal Achieved! ⭐", `Congratulations! You reached your savings goal: "${g.name}"!`, "🎉");
+                } else {
+                    showToast("Savings Added! ⭐", `Added ${formatCurrency(addAmt)} towards "${g.name}".`, "success", "💰");
                 }
                 updateAllCalculationsAndUI();
             }

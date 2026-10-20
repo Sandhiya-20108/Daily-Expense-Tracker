@@ -1,5 +1,5 @@
 // ExpenseFlow Service Worker - Offline & PWA Support
-const CACHE_NAME = 'expenseflow-pwa-v1';
+const CACHE_NAME = 'expenseflow-pwa-v2';
 const STATIC_ASSETS = [
     './',
     './index.html',
